@@ -10,7 +10,7 @@ from .models import (
     ClassificationResult,
     TranscriptResult,
 )
-from .output import write_batch_csv, write_candidate_csv, write_candidate_json
+from .output import write_batch_csv, write_candidate_json, write_candidate_report
 from .transcribe import transcribe_video
 
 
@@ -42,7 +42,7 @@ def run_pipeline(input_dir: Path, output_dir: Path, rubric_path: Path) -> None:
                 )
                 results.append(result)
                 write_candidate_json(result, output_dir)
-                write_candidate_csv(result, output_dir)
+                write_candidate_report(result, output_dir)
                 move_to_processed(candidate.path, input_dir)
                 continue
 
@@ -60,7 +60,7 @@ def run_pipeline(input_dir: Path, output_dir: Path, rubric_path: Path) -> None:
                 )
                 results.append(result)
                 write_candidate_json(result, output_dir)
-                write_candidate_csv(result, output_dir)
+                write_candidate_report(result, output_dir)
                 move_to_processed(candidate.path, input_dir)
                 continue
 
@@ -72,7 +72,7 @@ def run_pipeline(input_dir: Path, output_dir: Path, rubric_path: Path) -> None:
             )
             results.append(result)
             write_candidate_json(result, output_dir)
-            write_candidate_csv(result, output_dir)
+            write_candidate_report(result, output_dir)
             move_to_processed(candidate.path, input_dir)
 
         except Exception as e:
@@ -87,7 +87,7 @@ def run_pipeline(input_dir: Path, output_dir: Path, rubric_path: Path) -> None:
             )
             results.append(result)
             write_candidate_json(result, output_dir)
-            write_candidate_csv(result, output_dir)
+            write_candidate_report(result, output_dir)
 
     csv_path = write_batch_csv(results, output_dir)
     print(f"\nBatch summary written to {csv_path}")
