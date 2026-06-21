@@ -12,7 +12,13 @@ from interview_eval.models import (
     RubricAnalysis,
     TranscriptResult,
 )
-from interview_eval.output import write_batch_csv, write_candidate_report
+from interview_eval.output import (
+    JSON_SUBDIR,
+    REPORT_SUBDIR,
+    write_batch_csv,
+    write_candidate_json,
+    write_candidate_report,
+)
 
 
 def _make_result(candidate_id: str, recommendation: str = "Advance") -> CandidateResult:
@@ -109,12 +115,12 @@ def test_batch_csv_empty_first_run(tmp_path):
 # --- write_candidate_report ---
 
 
-def test_report_creates_html_file(tmp_path):
+def test_report_creates_html_in_subdirectory(tmp_path):
     result = _make_result("john-doe-SME")
     path = write_candidate_report(result, tmp_path)
     assert path.suffix == ".html"
     assert path.exists()
-    assert path.stat().st_size > 0
+    assert path.parent.name == REPORT_SUBDIR
 
 
 def test_report_contains_candidate_name(tmp_path):
@@ -203,3 +209,39 @@ def test_report_handles_zero_scores(tmp_path):
     html = write_candidate_report(result, tmp_path).read_text(encoding="utf-8")
     assert "Needs Human Review" in html
     assert "N/A" in html
+
+
+# --- directory structure ---
+
+
+def test_json_written_to_subdirectory(tmp_path):
+    result = _make_result("john-doe-SME")
+    path = write_candidate_json(result, tmp_path)
+    assert path.parent.name == JSON_SUBDIR
+    assert path.name == "john-doe-SME.json"
+    assert path.exists()
+
+
+def test_output_dir_structure(tmp_path):
+    result = _make_result("john-doe-SME")
+    write_candidate_json(result, tmp_path)
+    write_candidate_report(result, tmp_path)
+    write_batch_csv([result], tmp_path)
+
+    assert (tmp_path / JSON_SUBDIR / "john-doe-SME.json").exists()
+    assert (tmp_path / REPORT_SUBDIR / "john-doe-SME.html").exists()
+    assert (tmp_path / "batch_summary.csv").exists()
+
+    root_jsons = list(tmp_path.glob("*.json"))
+    root_htmls = list(tmp_path.glob("*.html"))
+    assert root_jsons == []
+    assert root_htmls == []
+
+
+def test_subdirs_created_idempotently(tmp_path):
+    r1 = _make_result("john-doe-SME")
+    r2 = _make_result("jane-smith-QA")
+    write_candidate_json(r1, tmp_path)
+    write_candidate_json(r2, tmp_path)
+    assert (tmp_path / JSON_SUBDIR / "john-doe-SME.json").exists()
+    assert (tmp_path / JSON_SUBDIR / "jane-smith-QA.json").exists()

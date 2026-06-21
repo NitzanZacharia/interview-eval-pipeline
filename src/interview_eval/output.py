@@ -8,6 +8,9 @@ from pathlib import Path
 from interview_eval.models import CandidateResult
 
 
+JSON_SUBDIR = "json_files"
+REPORT_SUBDIR = "report_files"
+
 CSV_COLUMNS = [
     "candidate_id",
     "first_name",
@@ -27,16 +30,18 @@ CSV_COLUMNS = [
 
 
 def write_candidate_json(result: CandidateResult, output_dir: Path) -> Path:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    path = output_dir / f"{result.candidate_id}.json"
+    json_dir = output_dir / JSON_SUBDIR
+    json_dir.mkdir(parents=True, exist_ok=True)
+    path = json_dir / f"{result.candidate_id}.json"
     with path.open("w", encoding="utf-8") as f:
         json.dump(result.model_dump(), f, indent=2)
     return path
 
 
 def write_candidate_report(result: CandidateResult, output_dir: Path) -> Path:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    path = output_dir / f"{result.candidate_id}.html"
+    report_dir = output_dir / REPORT_SUBDIR
+    report_dir.mkdir(parents=True, exist_ok=True)
+    path = report_dir / f"{result.candidate_id}.html"
     html = _render_report(result)
     with path.open("w", encoding="utf-8") as f:
         f.write(html)
