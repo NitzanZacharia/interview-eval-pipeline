@@ -29,6 +29,8 @@ from .models import TranscriptResult
 def transcribe_video(video_path: Path) -> TranscriptResult:
     wav_path: str | None = None
     try:
+        os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+        os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS", "1")
         from faster_whisper import WhisperModel
 
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
