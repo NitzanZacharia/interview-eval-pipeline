@@ -72,6 +72,7 @@ def run_pipeline(input_dir: Path, output_dir: Path, rubric_path: Path) -> None:
             )
             results.append(result)
             write_candidate_json(result, output_dir)
+            write_candidate_csv(result, output_dir)
             move_to_processed(candidate.path, input_dir)
 
         except Exception as e:
