@@ -2,13 +2,32 @@
 
 Automated candidate evaluation system for recorded job interviews. Processes MP4 video files through a transcription and LLM-scoring pipeline, producing structured JSON evaluations and a batch CSV summary.
 
+## Quick Start (Windows — for HR / non-technical users)
+
+If you're on a Windows machine and just want to grade interviews, you only need two double-clicks:
+
+1. **Install Python** — if you don't already have it, get it from the [Microsoft Store](https://apps.microsoft.com/search?query=python+3) or [python.org](https://www.python.org/downloads/). Make sure "Add Python to PATH" is checked during install.
+2. **Double-click `1_Setup_For_HR.bat`** — this creates a local environment, installs all dependencies (including FFmpeg), and sets up Desktop folders. It will open a Notepad window where you paste your API key.
+3. **Place `.mp4` interview videos** in the `Interviews_To_Grade` folder on your Desktop. Files must be named like `firstname-lastname-SME.mp4` or `firstname-lastname-QA.mp4`.
+4. **Double-click `2_Run_Evaluations.bat`** — results appear in the `Results` folder on your Desktop.
+
+> **First run note:** The first evaluation will download a transcription model, which may take a few minutes. The window may appear frozen — this is normal.
+
+---
+
 ## Requirements
 
 - Python 3.10+
-- FFmpeg installed and on PATH
+- FFmpeg installed and on PATH (the batch scripts handle this automatically on Windows)
 - Anthropic API key
 
 ## Install
+
+### Windows (automated)
+
+Double-click `1_Setup_For_HR.bat`. It handles the virtual environment, dependencies, FFmpeg, and API key configuration.
+
+### Manual / macOS / Linux
 
 ```bash
 # Install FFmpeg (pick your platform)
@@ -27,7 +46,14 @@ pip install -e ".[dev]"
 
 ## Configure
 
-Set your Anthropic API key:
+Copy the example env file and add your Anthropic API key:
+
+```bash
+cp .env.example .env
+# Edit .env and replace "your-api-key-here" with your real key
+```
+
+Or set it directly as an environment variable:
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
@@ -39,6 +65,12 @@ $env:ANTHROPIC_API_KEY = "sk-ant-..."
 ```
 
 ## Usage
+
+### Windows (automated)
+
+Double-click `2_Run_Evaluations.bat`. It reads videos from `Desktop\Interviews_To_Grade` and writes results to `Desktop\Results`.
+
+### Command line
 
 ```bash
 interview-eval --input-dir ./interviews --output-dir ./results
