@@ -2,11 +2,14 @@ import argparse
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 from . import config
 from .pipeline import run_pipeline
 
 
 def main() -> None:
+    load_dotenv()
     parser = argparse.ArgumentParser(
         prog="interview-eval",
         description="Evaluate recorded candidate interviews against a scoring rubric.",
