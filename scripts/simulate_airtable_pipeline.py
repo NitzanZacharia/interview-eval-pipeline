@@ -16,7 +16,7 @@ What it does NOT do:
   - Require write permissions. A read-only token is sufficient.
 
 Usage:
-  AIRTABLE_API_KEY=patXXXXXX... \\
+  AIRTABLE_TOKEN=patXXXXXX... \\
   ANTHROPIC_API_KEY=sk-ant-... \\
   python scripts/simulate_airtable_pipeline.py
 
@@ -34,6 +34,8 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # ---------------------------------------------------------------------------
 # Make the src/ layout importable when run directly from the project root
@@ -242,17 +244,18 @@ def _write_local_outputs(result: CandidateResult, output_dir: Path) -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    load_dotenv()
     args = _parse_args()
 
     # ── Validate environment ──────────────────────────────────────────────
-    airtable_key = os.environ.get("AIRTABLE_API_KEY", "").strip()
+    airtable_key = os.environ.get("AIRTABLE_TOKEN", "").strip()
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 
     if not airtable_key:
         print(
-            "ERROR: AIRTABLE_API_KEY is not set.\n"
+            "ERROR: AIRTABLE_TOKEN is not set.\n"
             "Export a read-only Personal Access Token:\n"
-            "  export AIRTABLE_API_KEY=patXXXXXX...",
+            "  export AIRTABLE_TOKEN=patXXXXXX...",
             file=sys.stderr,
         )
         sys.exit(1)

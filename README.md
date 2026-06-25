@@ -108,11 +108,52 @@ Per-candidate JSON files and a `batch_summary.csv` are written to the output dir
 4. **Classify** -- applies decision rules (Advance / Hold / Decline)
 5. **Output** -- writes JSON + CSV, moves processed files
 
+## Airtable Integration (read-only)
+
+The pipeline can ingest candidate videos directly from an Airtable base instead of a local directory. This is a **read-only** integration — it fetches records and downloads attachments but never writes back to Airtable.
+
+### How it works
+
+1. Polls the Candidate Submissions table for unscored "Video Submission" records (files attached, no score yet).
+2. Downloads the video attachment to a local temp directory.
+3. Fetches the linked scoring rubric from Airtable (or falls back to a local `scoring_rubric.md`).
+4. Runs the full pipeline: transcription, LLM scoring, classification.
+5. Writes results locally (JSON, HTML report, CSV) — nothing is written to Airtable.
+
+### Setup
+
+Set a read-only Airtable Personal Access Token with `data.records:read` and `schema.bases:read` scopes:
+
+```bash
+export AIRTABLE_TOKEN=patXXXXXX...
+export ANTHROPIC_API_KEY=sk-ant-...
+```
+
+On Windows (PowerShell):
+```powershell
+$env:AIRTABLE_TOKEN = "patXXXXXX..."
+$env:ANTHROPIC_API_KEY = "sk-ant-..."
+```
+
+### Running the simulation
+
+```bash
+python scripts/simulate_airtable_pipeline.py
+```
+
+| Flag | Default | Description |
+|:---|:---|:---|
+| `--record-id <ID>` | -- | Process a specific Airtable record instead of auto-fetching |
+| `--limit <N>` | `1` | Maximum number of records to process |
+| `--output-dir <DIR>` | `./sim_output` | Directory for JSON/HTML/CSV outputs |
+| `--fallback-rubric <PATH>` | `./scoring_rubric.md` | Local rubric used when no rubric is linked in Airtable |
+
 ## Modules
 
 | Module | Responsibility |
 |:---|:---|
 | `ingest.py` | File scanning, filename validation, directory management |
+| `airtable_ingest.py` | Airtable API polling, video download, rubric fetching |
 | `transcribe.py` | FFmpeg audio extraction + faster-whisper transcription |
 | `analyze.py` | Claude API rubric scoring with structured output |
 | `classify.py` | Pure decision logic (advance/hold/decline/hard-fail) |

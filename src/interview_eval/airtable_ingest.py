@@ -8,7 +8,7 @@ Requires only a read-only Airtable Personal Access Token with:
   - data.records:read
   - schema.bases:read
 
-Environment variable: AIRTABLE_API_KEY
+Environment variable: AIRTABLE_TOKEN
 """
 from __future__ import annotations
 
@@ -79,6 +79,7 @@ def _headers(api_key: str) -> dict[str, str]:
 
 def _get(url: str, params: dict, api_key: str, retries: int = 3) -> dict:
     """GET with exponential back-off on 429 (rate limit)."""
+    params = {**params, "returnFieldsByFieldId": "true"}
     for attempt in range(retries):
         resp = requests.get(url, headers=_headers(api_key), params=params, timeout=30)
         if resp.status_code == 429:
