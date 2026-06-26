@@ -1,2 +1,5 @@
 candidate_id,first_name,last_name,job_type,total_score,role_fit,domain_judgment,process,communication,instruction_following,recommendation,confidence,hard_fail,evaluation_timestamp
 unknown-unknown-SME,unknown,unknown,SME,4,0,0,1,2,1,Decline,0.88,true,2026-06-26T13:18:37Z
+emily-kobelenzdirienzo-QA,emily,kobelenzdirienzo,QA,13,2,2,2,3,4,Hold,0.82,false,2026-06-26T13:22:36Z
+maria-ferrara-QA,maria,ferrara,QA,12,2,2,2,3,3,Hold,0.72,false,2026-06-26T13:24:01Z
+leslie-doucet-QA,leslie,doucet,QA,11,2,2,2,2,3,Hold,0.82,false,2026-06-26T13:25:32Z
