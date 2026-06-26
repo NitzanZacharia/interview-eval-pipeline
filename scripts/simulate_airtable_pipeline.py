@@ -2,7 +2,7 @@
 """
 scripts/simulate_airtable_pipeline.py
 
-Read-only simulation of the Airtable-driven pipeline.
+Airtable-driven interview evaluation pipeline.
 
 What it does:
   1. Fetches unscored "Video Submission" records from the live Airtable base.
@@ -10,10 +10,11 @@ What it does:
   3. Fetches the linked rubric (or falls back to scoring_rubric.md).
   4. Runs transcription → scoring → classification exactly as the real pipeline does.
   5. Prints a full result summary and writes simulation_output.json to the CWD.
+  6. Optionally writes scores back to Airtable (see --write-back).
 
-What it does NOT do:
-  - Write anything back to Airtable (no PATCH, no POST, no DELETE).
-  - Require write permissions. A read-only token is sufficient.
+Default behaviour (no --write-back):
+  - No PATCH, POST, or DELETE to Airtable.
+  - A read-only token is sufficient.
 
 Usage:
   AIRTABLE_TOKEN=patXXXXXX... \\
@@ -25,6 +26,8 @@ Optional flags:
   --limit <n>        Process up to n records (default: 1).
   --output-dir <dir> Write JSON/HTML/CSV outputs here too (default: ./sim_output).
   --fallback-rubric <path>  Local rubric .md to use when no rubric is linked (default: ./scoring_rubric.md).
+  --write-back       Write scores back to Airtable after each successful evaluation.
+                     Requires data.records:write scope on the token.
 """
 from __future__ import annotations
 
@@ -49,6 +52,7 @@ from interview_eval.airtable_ingest import (
     fetch_rubric_text,
     fetch_single_record,
     fetch_unscored_video_submissions,
+    write_scores_to_airtable,
 )
 from interview_eval.analyze import score_transcript
 from interview_eval.classify import classify_candidate
@@ -100,6 +104,12 @@ def _parse_args() -> argparse.Namespace:
         metavar="PATH",
         help="Local rubric .md file used when no rubric is linked in Airtable.",
     )
+    parser.add_argument(
+        "--write-back",
+        action="store_true",
+        default=False,
+        help="Write scores back to Airtable after each successful evaluation (requires write scope).",
+    )
     return parser.parse_args()
 
 
@@ -113,11 +123,12 @@ def _process_record(
     download_dir: Path,
     fallback_rubric_path: Path,
     output_dir: Path,
+    write_back: bool = False,
 ) -> dict | None:
     """
     Run the full pipeline for one Airtable record.
     Returns the result dict (suitable for JSON serialisation) or None on failure.
-    Writes no data back to Airtable.
+    When write_back is True, PATCHes scores to Airtable after a successful evaluation.
     """
     record_id = record["id"]
     label     = record.get("fields", {}).get("fldDn1kGnhYp9QTfa", record_id)
@@ -198,6 +209,17 @@ def _process_record(
 
     _print_result(result_obj, at_record_id)
     _write_local_outputs(result_obj, output_dir)
+
+    if write_back:
+        try:
+            write_scores_to_airtable(result_obj, at_record_id, airtable_key)
+            print(f"  Scores written to Airtable record {at_record_id}.")
+        except Exception as exc:
+            print(
+                f"  WARNING: Airtable write failed for {at_record_id}: {exc}\n"
+                f"  Scores saved locally — re-run with --write-back to retry."
+            )
+
     return result_obj.model_dump()
 
 
@@ -311,6 +333,7 @@ def main() -> None:
                 download_dir=tmp_dir,
                 fallback_rubric_path=args.fallback_rubric,
                 output_dir=args.output_dir,
+                write_back=args.write_back,
             )
             if result_dict:
                 all_results.append(result_dict)

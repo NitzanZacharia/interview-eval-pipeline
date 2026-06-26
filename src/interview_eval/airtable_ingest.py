@@ -21,7 +21,7 @@ from typing import Optional
 import requests
 
 from .ingest import get_video_duration
-from .models import CandidateFile
+from .models import CandidateFile, CandidateResult
 from . import config
 
 # ---------------------------------------------------------------------------
@@ -42,6 +42,22 @@ F_CANDIDATE_NAME  = "fldIULihwWP4KmQKm"   # multipleLookupValues
 F_APPLICATION     = "fldYAiyp0ILBXGuiQ"   # multipleRecordLinks
 F_RUBRIC_LINK     = "fldQ6e4ARmWjasS7z"   # multipleRecordLinks → Rubric table
 F_SCORE_1         = "fldPHxOA56TRIsEXq"   # number — used to detect unscored records
+F_SCORE_2         = "fldr4ptlsQrynyMVT"   # number
+F_SCORE_3         = "flda1iZ43luzWo58q"   # number
+F_SCORE_4         = "flddiNitZN15QQlkS"   # number
+F_SCORE_5         = "fldR7xFsNNmyJp45d"   # number
+F_RECOMMENDATION  = "fldKC0LCVpzpv1Z1P"   # singleSelect
+F_NOTES           = "fldYtJUdvm7R2e6KN"   # multilineText
+# F_WEIGHTED_SCORE = "fldWy8zzT16FIt2Pz"  — formula field, auto-calculated; do not write
+
+# Airtable singleSelect names differ from pipeline labels — map at write time.
+# "Needs Human Review" has no Airtable equivalent; skip the field in that case.
+_RECOMMENDATION_MAP: dict[str, str | None] = {
+    "Advance":             "Hire",
+    "Hold":                "Lean no",
+    "Decline":             "Strong no",
+    "Needs Human Review":  None,
+}
 
 # Round type singleSelect option IDs (confirmed from live data)
 ROUND_VIDEO_SUBMISSION  = "sel11RPB63d9K0hFG"
@@ -91,6 +107,21 @@ def _get(url: str, params: dict, api_key: str, retries: int = 3) -> dict:
         resp.raise_for_status()
         return resp.json()
     resp.raise_for_status()  # re-raise on the final attempt
+    return {}  # unreachable; keeps type-checker happy
+
+
+def _patch(url: str, payload: dict, api_key: str, retries: int = 3) -> dict:
+    """PATCH with exponential back-off on 429 (rate limit)."""
+    for attempt in range(retries):
+        resp = requests.patch(url, headers=_headers(api_key), json=payload, timeout=30)
+        if resp.status_code == 429:
+            wait = 2 ** attempt
+            print(f"  [airtable_ingest] Rate limited — waiting {wait}s before retry...")
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        return resp.json()
+    resp.raise_for_status()
     return {}  # unreachable; keeps type-checker happy
 
 
@@ -385,3 +416,44 @@ Each criterion is scored 1 to 4. Record the total and per-criterion scores.
 {hard_fail_text}
 """
     return rubric_md
+
+
+# ---------------------------------------------------------------------------
+# Public: write pipeline scores back to an Airtable Submission record
+# ---------------------------------------------------------------------------
+
+def write_scores_to_airtable(
+    result: CandidateResult,
+    record_id: str,
+    api_key: str,
+) -> None:
+    """
+    PATCH the Candidate Submission record with scores from a completed pipeline run.
+
+    Writes all five dimension scores, the Recommendation singleSelect, and the
+    overall summary as Notes. The Weighted Score is a formula field and is never
+    written — Airtable recalculates it automatically once the score fields land.
+
+    Raises requests.HTTPError on non-retryable HTTP errors.
+    """
+    url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{SUBMISSIONS_TABLE}/{record_id}"
+
+    fields: dict = {
+        F_SCORE_1: result.scores.role_fit_and_relevant_experience.score,
+        F_SCORE_2: result.scores.domain_judgment.score,
+        F_SCORE_3: result.scores.process_and_methodology.score,
+        F_SCORE_4: result.scores.communication.score,
+        F_SCORE_5: result.scores.instruction_following_and_professionalism.score,
+        F_NOTES:   result.overall_summary,
+    }
+
+    airtable_recommendation = _RECOMMENDATION_MAP.get(result.recommendation)
+    if airtable_recommendation is not None:
+        fields[F_RECOMMENDATION] = airtable_recommendation
+    else:
+        print(
+            f"  [airtable_ingest] Recommendation '{result.recommendation}' has no "
+            "Airtable mapping — field skipped."
+        )
+
+    _patch(url, {"fields": fields}, api_key)
