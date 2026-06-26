@@ -275,6 +275,13 @@ def airtable_record_to_candidate_file(
 
     # ── 2. Parse identity fields ────────────────────────────────────────────
     candidate_names: list = fields.get(F_CANDIDATE_NAME, [])
+    if not candidate_names:
+        # F_CANDIDATE_NAME is a lookup that may be empty when the Application
+        # link isn't populated. Fall back to the submission name formula field,
+        # which has the format "Firstname Lastname - Role - Round Type".
+        submission_label = fields.get(F_SUBMISSION_NAME, "")
+        if submission_label:
+            candidate_names = [submission_label]
     first_name, last_name = _parse_name(candidate_names)
     job_type = _derive_job_type(candidate_names)
 

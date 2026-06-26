@@ -1,0 +1,2 @@
+candidate_id,first_name,last_name,job_type,total_score,role_fit,domain_judgment,process,communication,instruction_following,recommendation,confidence,hard_fail,evaluation_timestamp
+unknown-unknown-SME,unknown,unknown,SME,4,0,0,1,2,1,Decline,0.88,true,2026-06-26T13:18:37Z
