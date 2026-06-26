@@ -38,7 +38,7 @@ Watch every submitted video and score it using the rubric below. Each criterion 
 | Score | Description | QA Behavioral Signals |
 |:---:|:---|:---|
 | **4** | Rigorous and thoughtful about edge cases. | Describes a documented, multi-pass process with explicit steps for different error categories. Addresses edge cases: what to do when unsure, how to decide whether a fix is an editor fix or a developer ticket. Process is designed to scale across many items. |
-| **3** | Clear, repeatable approach. | Describes a repeatable review sequence. Uses or describes a checklist or structured approach. Can explain how they ensure consistency across multiple items. |
+| **3** | Clear, repeatable approach. | Describes a repeatable review sequence with multiple named steps. Uses or describes a checklist or structured approach. Can explain how they ensure consistency across multiple items. Example that earns a 3: *"I do a layout pass, then proofread all text, then test every interaction, then a final walkthrough against my notes"* — that is a documented multi-step sequence, regardless of how casually it is phrased. |
 | **2** | Some structure, but gaps remain. | Has a loose sequence (read once, fix obvious things) but no documented checklist, consistent framework, or method to ensure nothing is missed. |
 | **1** | No clear method. | Reviews "as they go" or "reads through once." Cannot describe what they check first, second, or last. No evidence of a systematic approach. |
 

@@ -41,21 +41,21 @@ from interview_eval.classify import classify_candidate
 # HR-assigned scores (source: manual HR evaluation of SANDBOX candidates).
 # Format: (role_fit, domain, process, comms, instr_following)
 HR_GROUND_TRUTH: dict[str, dict] = {
-    "leslie_doucet": {
+    "leslie-doucet-QA": {
         "label": "Leslie Doucet",
         "job_type": "QA",
         "hr_scores": (4, 4, 3, 4, 3),
         "hr_total": 18,
         "hr_recommendation": "Strong hire",
     },
-    "maria_ferrara": {
+    "maria-ferrara-QA": {
         "label": "Maria Ferrara",
         "job_type": "QA",
         "hr_scores": (3, 3, 4, 4, 4),
         "hr_total": 18,
         "hr_recommendation": "Strong hire",
     },
-    "emily_kobelenz": {
+    "emily-kobelenzdirienzo-QA": {
         "label": "Emily Kobelenz-DiRienzo",
         "job_type": "QA",
         "hr_scores": (1, 2, 2, 2, 3),
@@ -67,9 +67,9 @@ HR_GROUND_TRUTH: dict[str, dict] = {
 # AI scores produced by the old prompt (pre-revision baseline).
 # Source: simulation run on easy-setup branch before the ranking branch changes.
 BASELINE_AI_SCORES: dict[str, dict] = {
-    "leslie_doucet":  {"scores": (2, 2, 2, 2, 3), "total": 11, "recommendation": "Hold"},
-    "maria_ferrara":  {"scores": (2, 2, 2, 3, 3), "total": 12, "recommendation": "Hold"},
-    "emily_kobelenz": {"scores": (2, 2, 2, 3, 4), "total": 13, "recommendation": "Hold"},
+    "leslie-doucet-QA":            {"scores": (2, 2, 2, 2, 3), "total": 11, "recommendation": "Hold"},
+    "maria-ferrara-QA":            {"scores": (2, 2, 2, 3, 3), "total": 12, "recommendation": "Hold"},
+    "emily-kobelenzdirienzo-QA":   {"scores": (2, 2, 2, 3, 4), "total": 13, "recommendation": "Hold"},
 }
 
 RUBRIC_PATH = _ROOT / "scoring_rubric.md"
