@@ -4,8 +4,9 @@ src/interview_eval/airtable_ingest.py
 Read-only Airtable ingestion layer.
 Replaces scan_input_dir() for the Airtable-driven pipeline.
 
-Requires only a read-only Airtable Personal Access Token with:
+Requires an Airtable Personal Access Token with:
   - data.records:read
+  - data.records:write
   - schema.bases:read
 
 Environment variable: AIRTABLE_TOKEN
@@ -26,7 +27,7 @@ from . import config
 # ---------------------------------------------------------------------------
 # Base / table constants (confirmed from live schema exploration)
 # ---------------------------------------------------------------------------
-AIRTABLE_BASE_ID  = "appaDY3ar7TcmEkI6"
+AIRTABLE_BASE_ID  = "app2HZvbePXlH9xLX"
 SUBMISSIONS_TABLE = "tblAjBCyfful0jay0"
 RUBRIC_TABLE      = "tblt1hU6iW6dKsLkO"
 AIRTABLE_API_BASE = "https://api.airtable.com/v0"
