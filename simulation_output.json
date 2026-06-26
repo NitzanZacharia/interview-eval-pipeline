@@ -1,88 +1,14 @@
 [
   {
-    "candidate_id": "maria-ferrara-QA",
-    "first_name": "maria",
-    "last_name": "ferrara",
-    "job_type": "QA",
-    "evaluation_timestamp": "2026-06-26T14:07:25Z",
-    "transcript_metadata": {
-      "video_filename": "maria-ferrara-QA.mp4",
-      "video_duration_seconds": 152.564917,
-      "transcript_word_count": 444,
-      "duration_warning": null
-    },
-    "scores": {
-      "role_fit_and_relevant_experience": {
-        "score": 2,
-        "quotes": [
-          "I reviewed an online test, and one of the multiple choice questions allowed to correct answers, so I went back to the designer and pointed it out",
-          "Generally speaking, I had the ability to work directly with the developers, so that was a plus"
-        ],
-        "rationale": "The candidate demonstrates some real QA-adjacent experience \u2014 catching an error in an online test and coordinating with a designer to resolve it. However, the transcript provides very limited context about the scope, volume, or professional setting of her QA work. There is no indication of experience reviewing K-12 educational content specifically, and the background feels thin and anecdotal rather than evidence of sustained QA work in a professional or educational environment. Meets a minimal bar but does not inspire confidence."
-      },
-      "domain_judgment": {
-        "score": 2,
-        "quotes": [
-          "I'd check the page layout for any obvious formatting issues, I'd proofread all the text, I'd review all the graphics, I'd test all the interaction",
-          "one of the multiple choice questions allowed to correct answers, so I went back to the designer and pointed it out. It turns out it should have been a multiple selection question rather than a multiple choice"
-        ],
-        "rationale": "The candidate identifies a reasonable but generic set of error categories (layout, text, graphics, interactions). The example of catching a multiple-answer vs. multiple-choice question type mismatch shows some genuine QA instinct. However, she does not demonstrate knowledge of K-12-specific concerns such as curriculum alignment, grade-level appropriateness, instructional accuracy, or pedagogical correctness. The domain judgment shown is surface-level."
-      },
-      "process_and_methodology": {
-        "score": 2,
-        "quotes": [
-          "I would take a quick tour of the lesson, I'd check the page layout for any obvious formatting issues, I'd proofread all the text, I'd review all the graphics, I'd test all the interaction, and as I was doing each of those things I'd be making notes, finally I'd walk through the entire lesson from start to finish referencing my notes",
-          "I would go through and record the interaction or whatever else and narrate it so that I could explain what I was seeing and why I would think it was an error, and then if I didn't have that ability to record, I'd probably create a bunch of screenshots and put arrows and notes all over them"
-        ],
-        "rationale": "The candidate describes a recognizable multi-pass review process and sensible approaches to documenting bugs (screen recordings, annotated screenshots). However, the methodology lacks specificity and rigor \u2014 there is no mention of checklists, style guides, test plans, or any mechanism for ensuring consistency across many lessons. The process described is informal and would not scale confidently in a high-volume production environment."
-      },
-      "communication": {
-        "score": 3,
-        "quotes": [
-          "I would take a quick tour of the lesson, I'd check the page layout for any obvious formatting issues, I'd proofread all the text, I'd review all the graphics, I'd test all the interaction",
-          "The best thing that I could think to do in that case would be to record what I was seeing, so I would go through and record the interaction or whatever else and narrate it"
-        ],
-        "rationale": "The candidate communicates in a clear, conversational, and easy-to-follow manner. Her responses are organized and generally address what was asked. Some minor lack of structure (e.g., no clear enumeration or prioritization) and a slightly informal tone, but nothing that impedes understanding. Transcription artifacts are minor and do not obscure meaning."
-      },
-      "instruction_following_and_professionalism": {
-        "score": 3,
-        "quotes": [
-          "I'm responding to your email with the three questions in it, so here we go",
-          "And I think that's all you asked for right now, thanks very much for this opportunity"
-        ],
-        "rationale": "The candidate answered all three questions in order and acknowledged the format of the task. Her delivery is professional and respectful. The response is complete and on-topic. Slight informality and brief answers reduce the score marginally, but all instructions were followed."
-      }
-    },
-    "total_score": 12,
-    "recommendation": "Hold",
-    "recommendation_reason": "Total score 12 is borderline (11-13).",
-    "hard_fail_flags": {
-      "did_not_answer_all_questions": false,
-      "lacks_core_experience": false,
-      "cannot_communicate_clearly": false
-    },
-    "confidence_score": 0.78,
-    "overall_summary": "Maria demonstrates basic QA sensibility \u2014 she can identify common error types, has a real example of catching an interactive content bug, and communicates clearly. However, her responses are thin on depth and specificity. She lacks demonstrated experience with K-12 educational content, offers no systematic methodology for ensuring consistency at scale, and her domain knowledge does not extend beyond surface-level error categories. She is a marginal candidate who meets a minimal bar but would likely need significant mentorship and structure to perform reliably in a production QA role for K-12 educational materials. Confidence in this evaluation is moderately high given the completeness of the transcript, though the brevity of her answers limits full assessment of her capabilities.",
-    "system_notes": {
-      "model_used": "claude-sonnet-4-6",
-      "rubric_version": "scoring_rubric.md",
-      "pipeline_version": "0.1.0",
-      "limitations": [
-        "Transcription quality may affect scoring accuracy.",
-        "Scores reflect rubric criteria only, not holistic assessment."
-      ]
-    }
-  },
-  {
     "candidate_id": "leslie-doucet-QA",
     "first_name": "leslie",
     "last_name": "doucet",
     "job_type": "QA",
-    "evaluation_timestamp": "2026-06-26T14:09:05Z",
+    "evaluation_timestamp": "2026-06-26T14:57:26Z",
     "transcript_metadata": {
       "video_filename": "leslie-doucet-QA.mp4",
       "video_duration_seconds": 223.818542,
-      "transcript_word_count": 616,
+      "transcript_word_count": 636,
       "duration_warning": null
     },
     "scores": {
@@ -90,45 +16,44 @@
         "score": 2,
         "quotes": [
           "I have been a teacher for 29 years in English",
-          "I also worked for a company where I was a content director, a content developer, I'm a subject matter expert"
+          "I've also worked for a company where I was a content director, a content developer. Um, I'm a subject matter expert."
         ],
-        "rationale": "The candidate has a strong teaching background (29 years in English) and some content development/SME experience. However, there is no specific mention of formal QA work, structured content review processes in a digital product context, or systematic error-tracking beyond classroom-level curriculum review. The background is adjacent but does not clearly meet the core bar for a dedicated QA role reviewing digital lesson materials at scale."
+        "rationale": "The candidate has a long teaching career and some content development experience, which provides a baseline for content review. However, the background is primarily classroom teaching, not dedicated QA work on digital or educational materials at scale. The content director/developer role is mentioned but not elaborated upon, making it difficult to assess its relevance. The core bar for QA \u2014 real, systematic experience reviewing content or materials for accuracy in a professional QA capacity \u2014 is only partially met."
       },
       "domain_judgment": {
         "score": 2,
         "quotes": [
-          "the assessments didn't, they didn't align with what we were actually teaching",
-          "we look for spelling and accuracy errors",
-          "making sure that the objectives align with the standards"
+          "the assessments didn't. They didn't align with what we were actually teaching",
+          "making sure that the objectives align with the standards that the standards are aligned",
+          "spelling and grammar and accuracy"
         ],
-        "rationale": "The candidate shows basic instincts for content accuracy\u2014spotting misaligned assessments, spelling/grammar errors, and standards alignment. However, the examples are surface-level and classroom-teacher oriented rather than demonstrating systematic QA judgment. No mention of deeper accuracy verification, fact-checking, instructional design logic, or error taxonomy beyond spelling/grammar."
+        "rationale": "The candidate demonstrates awareness of alignment between objectives, standards, and assessments, and identifies spelling/grammar/accuracy as error types. However, the examples are surface-level and classroom-centric. There is no mention of digital-specific error types (broken links, rendering issues, metadata errors, accessibility), no discussion of content accuracy beyond grammar, and no evidence of instinct for the broader range of errors a QA reviewer would catch in a digital lesson platform."
       },
       "process_and_methodology": {
         "score": 2,
         "quotes": [
-          "we have checklists, I have a checklist for almost everything that I do",
-          "look at it in its entirety, making sure that the objectives align with the standards",
-          "if it's something that I can fix on whatever platform it is that I'm using, then I would go ahead and fix it"
+          "The very first thing we have to do is look at it in its entirety",
+          "We have checklists. I have a checklist for almost everything that I do, literally a list for everything I do",
+          "if it's something that I can fix, uh, on whatever platform it is that I'm using, then I would go ahead and fix it"
         ],
-        "rationale": "The candidate references using checklists as a consistency tool, which is a positive signal. However, the described process is vague\u2014no detail on what the checklist contains, how errors are categorized, how severity is assessed, or how the review workflow is structured. The bug ticket response is particularly thin, relying on general intuition rather than a defined triage methodology."
+        "rationale": "The candidate mentions using checklists and reviewing lessons holistically, which are positive signals. However, the process described is vague \u2014 no detail is given about what the checklist contains, how it is structured, or how reviews are sequenced. The bug triage answer is particularly underdeveloped: the candidate offers no framework for deciding what goes to a developer versus what they fix themselves, and no description of how to write a clear, actionable bug ticket."
       },
       "communication": {
         "score": 2,
         "quotes": [
-          "I say we, my team and myself have put to, you know, really have to get into it",
-          "anything that I couldn't fix on my own, or if the company had asked me, you know, to follow a certain protocol, then I would, I would definitely have to do that"
+          "I say, we, my team and myself have put to, um, you know, really have to get into it",
+          "I feel like if it, if it's something that I can fix, uh, on whatever platform it is that I'm using",
+          "I think I've answered the 3 questions. I hope"
         ],
-        "rationale": "The candidate is personable and easy to understand at a surface level, but the responses are frequently rambling, vague, and lack specificity. Filler phrases ('you know,' 'name it,' 'you name it') and incomplete thoughts reduce clarity. Answers are organized loosely but do not demonstrate concise, professional communication expected in a QA documentation role."
+        "rationale": "The candidate is personable and easy to follow at a high level, but answers are frequently vague, trail off, and lack specificity. Filler language and incomplete sentences appear throughout. The substance of answers is thin, making it hard to extract concrete information. Communication is functional but not strong enough to inspire confidence in a QA role where precision and clarity in written documentation are essential."
       },
       "instruction_following_and_professionalism": {
         "score": 3,
         "quotes": [
-          "I know I have three questions that I need to answer, so the first one",
-          "Okay, so the second question is",
-          "When you find an issue...",
-          "I think I've answered the three questions"
+          "I wanted to make sure that I keep this under five minutes. I know I have three questions that I need to answer",
+          "I think I've answered the 3 questions. I hope, uh, I'm looking forward to hearing back from you. Thank you so much."
         ],
-        "rationale": "The candidate explicitly acknowledged all three questions and addressed each one, staying within the time constraint. Delivery was courteous and professional in tone. Minor deductions for imprecise segmentation between answers and lack of preparation depth, but all instructions were followed."
+        "rationale": "The candidate addressed all three questions in sequence, demonstrated awareness of the time constraint, and maintained a professional and courteous tone throughout. Delivery was conversational but not unprofessional. Minor deduction for the uncertain closing ('I think I've answered the 3 questions. I hope') which slightly undermines confidence, but overall instruction-following was solid."
       }
     },
     "total_score": 11,
@@ -140,7 +65,7 @@
       "cannot_communicate_clearly": false
     },
     "confidence_score": 0.78,
-    "overall_summary": "Leslie presents as a long-tenured English teacher with some content development experience, but the transcript does not strongly support readiness for a formal QA role. Core process descriptions are vague, the bug-triage answer lacks any structured methodology, and examples are mostly classroom-level rather than digital QA contexts. Communication is adequate but not polished. No hard-fail conditions apply. The main uncertainty is that some relevant experience (content director role) was mentioned but not elaborated upon\u2014a follow-up interview could clarify whether her SME/content developer work included structured QA workflows.",
+    "overall_summary": "Leslie presents as a long-tenured English teacher with genuine familiarity with curriculum review and content alignment, but her responses lack the specificity and depth expected for a dedicated QA role. Her process descriptions are high-level and her bug triage answer is underdeveloped \u2014 she does not describe how to write an actionable ticket or articulate a clear decision framework. Domain knowledge is classroom-oriented rather than QA-oriented. She does not hard-fail on any criterion, but scores cluster at 2 across most dimensions, indicating a developing rather than strong candidate. Confidence in this evaluation is moderately high given a complete transcript, though the brevity of some answers limits full assessment of her capabilities.",
     "system_notes": {
       "model_used": "claude-sonnet-4-6",
       "rubric_version": "scoring_rubric.md",
