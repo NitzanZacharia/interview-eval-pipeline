@@ -110,7 +110,7 @@ Per-candidate JSON files and a `batch_summary.csv` are written to the output dir
 
 ## Airtable Integration (read-only)
 
-The pipeline can ingest candidate videos directly from an Airtable base instead of a local directory. This is a **read-only** integration — it fetches records and downloads attachments but never writes back to Airtable.
+The pipeline can ingest candidate videos directly from an Airtable base instead of a local directory. By default it is **read-only** — it fetches records and downloads attachments without writing anything back. Pass `--write-back` to also PATCH scores into Airtable after each evaluation.
 
 ### How it works
 
@@ -122,7 +122,7 @@ The pipeline can ingest candidate videos directly from an Airtable base instead 
 
 ### Setup
 
-Set a read-only Airtable Personal Access Token with `data.records:read` and `schema.bases:read` scopes:
+Set an Airtable Personal Access Token with at minimum `data.records:read` and `schema.bases:read` scopes. Add `data.records:write` if you plan to use `--write-back`.
 
 ```bash
 export AIRTABLE_TOKEN=patXXXXXX...
@@ -135,7 +135,7 @@ $env:AIRTABLE_TOKEN = "patXXXXXX..."
 $env:ANTHROPIC_API_KEY = "sk-ant-..."
 ```
 
-### Running the simulation
+### Running the simulation (read-only)
 
 ```bash
 python scripts/simulate_airtable_pipeline.py
@@ -147,6 +147,32 @@ python scripts/simulate_airtable_pipeline.py
 | `--limit <N>` | `1` | Maximum number of records to process |
 | `--output-dir <DIR>` | `./sim_output` | Directory for JSON/HTML/CSV outputs |
 | `--fallback-rubric <PATH>` | `./scoring_rubric.md` | Local rubric used when no rubric is linked in Airtable |
+| `--write-back` | off | Write scores back to Airtable after each successful evaluation |
+
+### Writing scores back to Airtable
+
+Pass `--write-back` to PATCH results into the Candidate Submissions record after scoring. This requires `data.records:write` scope on the token.
+
+```bash
+python scripts/simulate_airtable_pipeline.py --limit 3 --write-back
+```
+
+On success the record receives all five dimension scores, a Weighted Score (recalculated automatically by Airtable's formula field), and a Recommendation. Once Score 1 is written, that record no longer matches the "unscored" filter, so it will not be re-fetched on future runs.
+
+#### Recommendation mapping
+
+The pipeline produces four internal labels. These are translated to Airtable's singleSelect options before writing:
+
+| Pipeline label | Airtable value | Notes |
+|:---|:---|:---|
+| `Advance` | `Hire` | Conservative default — promote to `Strong hire` manually if warranted |
+| `Hold` | `Lean no` | |
+| `Decline` | `Strong no` | |
+| `Needs Human Review` | _(skipped)_ | No equivalent option exists; the Recommendation field is left blank |
+
+The mapping is defined in `_RECOMMENDATION_MAP` in `airtable_ingest.py`. To promote an `Advance` to `Strong hire` automatically (e.g. when `total_score >= 16`), edit that dict or add a scoring threshold there.
+
+> **Note:** Transcription and scoring failures are never written back. Those records keep `Score 1` blank so they are retried on the next run.
 
 ## Modules
 
