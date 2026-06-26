@@ -62,7 +62,7 @@ def _make_record(
         F_FILES: attachments,
     }
     if rubric_ids is not None:
-        fields[F_RUBRIC_LINK] = [{"id": rid} for rid in rubric_ids]
+        fields[F_RUBRIC_LINK] = list(rubric_ids)
     if score_1 is not None:
         fields[F_SCORE_1] = score_1
     return {"id": record_id, "fields": fields}

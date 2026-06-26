@@ -141,9 +141,7 @@ def _process_record(
 
     # ── Step 2: Fetch rubric ──────────────────────────────────────────────
     print("  [2/5] Fetching rubric...")
-    rubric_ids: list[str] = [
-        r["id"] for r in record.get("fields", {}).get(F_RUBRIC_LINK, [])
-    ]
+    rubric_ids: list[str] = record.get("fields", {}).get(F_RUBRIC_LINK, [])
     if rubric_ids:
         rubric_text = fetch_rubric_text(rubric_ids, airtable_key)
         print(f"        Rubric fetched from Airtable (record {rubric_ids[0]}).")
