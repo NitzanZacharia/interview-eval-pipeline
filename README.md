@@ -11,7 +11,7 @@ If you're on a Windows machine and just want to grade interviews, you only need 
 3. **Place `.mp4` interview videos** in the `Interviews_To_Grade` folder on your Desktop. Files must be named like `firstname-lastname-SME.mp4` or `firstname-lastname-QA.mp4`.
 4. **Double-click `2_Run_Evaluations.bat`** — results appear in the `Results` folder on your Desktop.
 
-> **First run note:** The first evaluation will download a transcription model, which may take a few minutes. The window may appear frozen — this is normal.
+> **First run note:** The first evaluation downloads the `small` faster-whisper transcription model (~460 MB). The window may appear frozen while downloading and during transcription of large video files — this is normal.
 
 ---
 
@@ -103,8 +103,8 @@ Per-candidate JSON files and a `batch_summary.csv` are written to the output dir
 ## Pipeline
 
 1. **Ingest** -- scans for `.mp4` files, validates filenames, checks duration
-2. **Transcribe** -- extracts audio via FFmpeg, transcribes with faster-whisper
-3. **Analyze** -- scores transcript against rubric via Claude Sonnet
+2. **Transcribe** -- extracts audio via FFmpeg, transcribes with faster-whisper (`small` model)
+3. **Analyze** -- scores transcript against rubric via Claude Sonnet 4.6 (`temperature=0`, calibrated decisiveness prompt)
 4. **Classify** -- applies decision rules (Advance / Hold / Decline)
 5. **Output** -- writes JSON + CSV, moves processed files
 
@@ -148,6 +148,7 @@ python scripts/simulate_airtable_pipeline.py
 | `--output-dir <DIR>` | `./sim_output` | Directory for JSON/HTML/CSV outputs |
 | `--fallback-rubric <PATH>` | `./scoring_rubric.md` | Local rubric used when no rubric is linked in Airtable |
 | `--write-back` | off | Write scores back to Airtable after each successful evaluation |
+| `--save-transcripts` | off | Save raw transcript text to `tests/fixtures/transcripts/` after transcription |
 
 ### Writing scores back to Airtable
 
@@ -174,12 +175,50 @@ The mapping is defined in `_RECOMMENDATION_MAP` in `airtable_ingest.py`. To prom
 
 > **Note:** Transcription and scoring failures are never written back. Those records keep `Score 1` blank so they are retried on the next run.
 
+## Scoring Calibration
+
+The LLM scoring prompt and rubric were calibrated against a set of real QA Specialist video submissions with known HR ground-truth scores to reduce central tendency bias (the tendency to score everything 2 or 3 regardless of actual quality).
+
+### What was changed
+
+**System prompt (`analyze.py`)** — rewritten with three explicit directives:
+- *Decisiveness mandate*: scores 1 and 4 are expected when evidence clearly supports them; 2 and 3 require justification just as much as the extremes do.
+- *Symmetric evidence clause*: withholding a high score when clear evidence of excellence exists is treated as an error, not as caution.
+- *Substance-over-form*: conversational or rambling delivery is not penalised — the substance of what the candidate describes is what matters.
+
+**Scoring rubric (`scoring_rubric.md`)** — each criterion's 1–4 anchor cells were expanded from a single generic sentence to 2–3 QA-specific behavioral signals per level. The Process criterion's score-3 anchor includes a worked example so the model can recognise a documented multi-step review sequence regardless of how casually it is phrased.
+
+**Transcription model (`config.py`)** — upgraded from `base` to `small` for better fidelity on conversational speech.
+
+**Temperature** — set to `0` in all API calls for deterministic, reproducible scoring.
+
+### Calibration results (3 QA candidates)
+
+| | Old prompt | New prompt | HR ground truth |
+|:---|:---:|:---:|:---:|
+| Average MAE vs. HR | 1.07 | **0.87** | — |
+| Direction accuracy | 0 / 3 | **2 / 3** | — |
+
+### Running the calibration harness
+
+To re-run calibration after changing the prompt or rubric:
+
+```bash
+# Step 1: generate transcript fixtures (downloads + transcribes from Airtable)
+python scripts/simulate_airtable_pipeline.py --limit 3 --save-transcripts
+
+# Step 2: score the fixtures and compare against HR ground truth
+python scripts/compare_prompts.py
+```
+
+`compare_prompts.py` prints a per-candidate breakdown and writes `compare_output.csv`. The target is MAE < 1.0 and correct Advance/Decline direction on all calibration candidates. Transcript fixtures are stored in `tests/fixtures/transcripts/` and do not need to be regenerated unless the candidate pool changes.
+
 ## Modules
 
 | Module | Responsibility |
 |:---|:---|
 | `ingest.py` | File scanning, filename validation, directory management |
-| `airtable_ingest.py` | Airtable API polling, video download, rubric fetching |
+| `airtable_ingest.py` | Airtable API polling, video download, rubric fetching, score write-back |
 | `transcribe.py` | FFmpeg audio extraction + faster-whisper transcription |
 | `analyze.py` | Claude API rubric scoring with structured output |
 | `classify.py` | Pure decision logic (advance/hold/decline/hard-fail) |
@@ -188,6 +227,13 @@ The mapping is defined in `_RECOMMENDATION_MAP` in `airtable_ingest.py`. To prom
 | `cli.py` | CLI entry point (argparse) |
 | `models.py` | All Pydantic data models |
 | `config.py` | Configuration constants and environment loading |
+
+**Scripts** (`scripts/`):
+
+| Script | Responsibility |
+|:---|:---|
+| `simulate_airtable_pipeline.py` | End-to-end Airtable pipeline runner (read-only by default, `--write-back` to PATCH scores) |
+| `compare_prompts.py` | Prompt calibration harness — scores saved transcript fixtures, reports MAE and direction accuracy vs. HR ground truth |
 
 ## Tests
 
