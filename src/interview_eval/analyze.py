@@ -26,15 +26,27 @@ from .models import RubricAnalysis
 
 
 SYSTEM_PROMPT = (
-    "You are a professional hiring evaluator. Score the candidate's interview "
-    "transcript strictly against the scoring rubric provided. For each of the 5 "
-    "criteria, assign a score from 0 to 4, extract verbatim quotes from the "
-    "transcript as evidence, and write a concise rationale grounded in those "
-    "quotes. Determine whether any hard-fail conditions apply. Provide a "
-    "confidence score from 0.0 to 1.0 reflecting how certain you are in your "
-    "evaluation given the quality and completeness of the transcript. Flag any "
-    "uncertainties or limitations in the overall_summary. Do not reward claims "
-    "the transcript does not support, and do not penalize the candidate for "
+    "You are a calibrated hiring evaluator. Your job is to give differentiated, "
+    "decisive scores — not to hedge toward the middle of the scale. "
+    "Score 1 when a candidate clearly fails to meet the criterion. "
+    "Score 4 when the evidence clearly demonstrates they exceed it. "
+    "The scores 2 and 3 are not default positions; they require justification "
+    "just as much as 1 or 4 do. Do not compress scores into the 2-3 range out "
+    "of caution — a 3 is a strong performer and a 2 is a developing one with "
+    "significant gaps. "
+    "For each of the 5 criteria, assign a score from 1 to 4 (use 0 only if the "
+    "candidate did not address the criterion at all), extract verbatim quotes "
+    "from the transcript as evidence, and write a concise rationale grounded in "
+    "those quotes. "
+    "Do not reward claims the transcript does not support. "
+    "Equally, do not withhold a high score when the transcript contains clear, "
+    "specific evidence of excellence — specific examples, named methodologies, "
+    "and concrete outcomes are strong evidence of a 4; vague statements are "
+    "evidence of a 2. "
+    "Determine whether any hard-fail conditions apply. Provide a confidence score "
+    "from 0.0 to 1.0 reflecting how certain you are in your evaluation given the "
+    "quality and completeness of the transcript. Flag any uncertainties or "
+    "limitations in the overall_summary. Do not penalize the candidate for "
     "transcription artifacts."
 )
 
@@ -64,6 +76,7 @@ def score_transcript(
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_message}],
             output_format=RubricAnalysis,
+            temperature=0,
         )
         return response.parsed_output
     except Exception as e:  # noqa: BLE001 — isolate per-candidate scoring failures

@@ -110,6 +110,12 @@ def _parse_args() -> argparse.Namespace:
         default=False,
         help="Write scores back to Airtable after each successful evaluation (requires write scope).",
     )
+    parser.add_argument(
+        "--save-transcripts",
+        action="store_true",
+        default=False,
+        help="Save raw transcript text to tests/fixtures/transcripts/<candidate_id>.txt after transcription.",
+    )
     return parser.parse_args()
 
 
@@ -124,6 +130,7 @@ def _process_record(
     fallback_rubric_path: Path,
     output_dir: Path,
     write_back: bool = False,
+    save_transcripts: bool = False,
 ) -> dict | None:
     """
     Run the full pipeline for one Airtable record.
@@ -183,6 +190,12 @@ def _process_record(
         return result_obj.model_dump()
 
     print(f"        Transcript : {transcript.word_count} words")
+    if save_transcripts and transcript.text:
+        fixtures_dir = _ROOT / "tests" / "fixtures" / "transcripts"
+        fixtures_dir.mkdir(parents=True, exist_ok=True)
+        txt_path = fixtures_dir / f"{candidate.candidate_id}.txt"
+        txt_path.write_text(transcript.text, encoding="utf-8")
+        print(f"        Transcript saved → {txt_path}")
 
     # ── Step 4: Score ─────────────────────────────────────────────────────
     print(f"  [4/5] Scoring transcript via Claude ({candidate.job_type})...")
@@ -334,6 +347,7 @@ def main() -> None:
                 fallback_rubric_path=args.fallback_rubric,
                 output_dir=args.output_dir,
                 write_back=args.write_back,
+                save_transcripts=args.save_transcripts,
             )
             if result_dict:
                 all_results.append(result_dict)
