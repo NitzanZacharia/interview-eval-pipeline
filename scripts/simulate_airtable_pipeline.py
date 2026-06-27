@@ -10,11 +10,12 @@ What it does:
   3. Fetches the linked rubric (or falls back to scoring_rubric.md).
   4. Runs transcription → scoring → classification exactly as the real pipeline does.
   5. Prints a full result summary and writes simulation_output.json to the CWD.
-  6. Optionally writes scores back to Airtable (see --write-back).
+  6. Writes scores back to Airtable after each successful evaluation.
 
-Default behaviour (no --write-back):
-  - No PATCH, POST, or DELETE to Airtable.
-  - A read-only token is sufficient.
+Default behaviour:
+  - PATCHes scores, recommendation, and notes to the Airtable record.
+  - Requires data.records:write scope on the token.
+  - Pass --dry-run to skip the write-back (read-only token is then sufficient).
 
 Usage:
   AIRTABLE_TOKEN=patXXXXXX... \\
@@ -26,8 +27,7 @@ Optional flags:
   --limit <n>        Process up to n records (default: 1).
   --output-dir <dir> Write JSON/HTML/CSV outputs here too (default: ./sim_output).
   --fallback-rubric <path>  Local rubric .md to use when no rubric is linked (default: ./scoring_rubric.md).
-  --write-back       Write scores back to Airtable after each successful evaluation.
-                     Requires data.records:write scope on the token.
+  --dry-run          Skip writing scores back to Airtable (read-only mode).
 """
 from __future__ import annotations
 
@@ -75,8 +75,9 @@ from interview_eval.transcribe import transcribe_video
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Read-only simulation of the Airtable-driven interview pipeline."
+        description="Airtable-driven interview evaluation pipeline."
     )
+    parser.set_defaults(write_back=True)
     parser.add_argument(
         "--record-id",
         metavar="ID",
@@ -105,10 +106,10 @@ def _parse_args() -> argparse.Namespace:
         help="Local rubric .md file used when no rubric is linked in Airtable.",
     )
     parser.add_argument(
-        "--write-back",
-        action="store_true",
-        default=False,
-        help="Write scores back to Airtable after each successful evaluation (requires write scope).",
+        "--dry-run",
+        action="store_false",
+        dest="write_back",
+        help="Skip writing scores back to Airtable (read-only mode).",
     )
     parser.add_argument(
         "--save-transcripts",
@@ -230,7 +231,7 @@ def _process_record(
         except Exception as exc:
             print(
                 f"  WARNING: Airtable write failed for {at_record_id}: {exc}\n"
-                f"  Scores saved locally — re-run with --write-back to retry."
+                f"  Scores saved locally — re-run without --dry-run to retry."
             )
 
     return result_obj.model_dump()

@@ -135,11 +135,13 @@ $env:AIRTABLE_TOKEN = "patXXXXXX..."
 $env:ANTHROPIC_API_KEY = "sk-ant-..."
 ```
 
-### Running the simulation (read-only)
+### Running the pipeline
 
 ```bash
 python scripts/simulate_airtable_pipeline.py
 ```
+
+Scores are written back to Airtable by default. Pass `--dry-run` to skip the write-back (useful for testing; a read-only token is then sufficient).
 
 | Flag | Default | Description |
 |:---|:---|:---|
@@ -147,15 +149,16 @@ python scripts/simulate_airtable_pipeline.py
 | `--limit <N>` | `1` | Maximum number of records to process |
 | `--output-dir <DIR>` | `./sim_output` | Directory for JSON/HTML/CSV outputs |
 | `--fallback-rubric <PATH>` | `./scoring_rubric.md` | Local rubric used when no rubric is linked in Airtable |
-| `--write-back` | off | Write scores back to Airtable after each successful evaluation |
+| `--dry-run` | off | Skip writing scores back to Airtable (read-only mode) |
 | `--save-transcripts` | off | Save raw transcript text to `tests/fixtures/transcripts/` after transcription |
 
 ### Writing scores back to Airtable
 
-Pass `--write-back` to PATCH results into the Candidate Submissions record after scoring. This requires `data.records:write` scope on the token.
+After each successful evaluation the pipeline PATCHes results into the Candidate Submissions record. This requires `data.records:write` scope on the token. Use `--dry-run` to process records without writing anything back.
 
 ```bash
-python scripts/simulate_airtable_pipeline.py --limit 3 --write-back
+python scripts/simulate_airtable_pipeline.py --limit 3
+python scripts/simulate_airtable_pipeline.py --limit 3 --dry-run  # read-only
 ```
 
 On success the record receives all five dimension scores, a Weighted Score (recalculated automatically by Airtable's formula field), and a Recommendation. Once Score 1 is written, that record no longer matches the "unscored" filter, so it will not be re-fetched on future runs.
