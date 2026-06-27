@@ -146,7 +146,7 @@ Scores are written back to Airtable by default. Pass `--dry-run` to skip the wri
 | Flag | Default | Description |
 |:---|:---|:---|
 | `--record-id <ID>` | -- | Process a specific Airtable record instead of auto-fetching |
-| `--limit <N>` | `1` | Maximum number of records to process |
+| `--limit <N>` | all | Maximum number of records to process |
 | `--output-dir <DIR>` | `./sim_output` | Directory for JSON/HTML/CSV outputs |
 | `--fallback-rubric <PATH>` | `./scoring_rubric.md` | Local rubric used when no rubric is linked in Airtable |
 | `--dry-run` | off | Skip writing scores back to Airtable (read-only mode) |

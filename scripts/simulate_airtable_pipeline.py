@@ -24,7 +24,7 @@ Usage:
 
 Optional flags:
   --record-id <id>   Process a specific Airtable record instead of the first unscored one.
-  --limit <n>        Process up to n records (default: 1).
+  --limit <n>        Process up to n records (default: all eligible records).
   --output-dir <dir> Write JSON/HTML/CSV outputs here too (default: ./sim_output).
   --fallback-rubric <path>  Local rubric .md to use when no rubric is linked (default: ./scoring_rubric.md).
   --dry-run          Skip writing scores back to Airtable (read-only mode).
@@ -87,9 +87,9 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--limit",
         type=int,
-        default=1,
+        default=None,
         metavar="N",
-        help="Maximum number of records to process (default: 1).",
+        help="Maximum number of records to process (default: all eligible records).",
     )
     parser.add_argument(
         "--output-dir",
@@ -330,8 +330,11 @@ def main() -> None:
             )
             sys.exit(0)
 
-        print(f"Found {len(records)} unscored record(s). Processing up to {args.limit}.")
-        records = records[: args.limit]
+        if args.limit is not None:
+            print(f"Found {len(records)} unscored record(s). Processing up to {args.limit}.")
+            records = records[: args.limit]
+        else:
+            print(f"Found {len(records)} unscored record(s). Processing all.")
 
     # ── Process each record inside a shared temp directory ────────────────
     all_results: list[dict] = []
