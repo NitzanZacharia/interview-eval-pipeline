@@ -62,14 +62,31 @@ HR_GROUND_TRUTH: dict[str, dict] = {
         "hr_total": 10,
         "hr_recommendation": "Strong no",
     },
+    "natalie-emery-SME": {
+        "label": "Natalie Emery",
+        "job_type": "SME",
+        "hr_scores": (3, 3, 4, 4, 4),
+        "hr_total": 18,
+        "hr_recommendation": "Strong hire",
+    },
+    "cynthia-taylor-SME": {
+        "label": "Cynthia Taylor",
+        "job_type": "SME",
+        "hr_scores": (3, 3, 3, 4, 4),
+        "hr_total": 17,
+        "hr_recommendation": "Hire",
+    },
 }
 
 # AI scores produced by the old prompt (pre-revision baseline).
-# Source: simulation run on easy-setup branch before the ranking branch changes.
+# QA source: simulation run on easy-setup branch before the ranking branch changes.
+# SME source: simulation run on ranking branch with QA-only rubric (before SME anchors added).
 BASELINE_AI_SCORES: dict[str, dict] = {
     "leslie-doucet-QA":            {"scores": (2, 2, 2, 2, 3), "total": 11, "recommendation": "Hold"},
     "maria-ferrara-QA":            {"scores": (2, 2, 2, 3, 3), "total": 12, "recommendation": "Hold"},
     "emily-kobelenzdirienzo-QA":   {"scores": (2, 2, 2, 3, 4), "total": 13, "recommendation": "Hold"},
+    "natalie-emery-SME":           {"scores": (2, 2, 3, 3, 4), "total": 14, "recommendation": "Hold"},
+    "cynthia-taylor-SME":          {"scores": (4, 3, 3, 3, 4), "total": 17, "recommendation": "Advance"},
 }
 
 RUBRIC_PATH = _ROOT / "scoring_rubric.md"

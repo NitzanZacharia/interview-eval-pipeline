@@ -186,18 +186,20 @@ The LLM scoring prompt and rubric were calibrated against a set of real QA Speci
 - *Symmetric evidence clause*: withholding a high score when clear evidence of excellence exists is treated as an error, not as caution.
 - *Substance-over-form*: conversational or rambling delivery is not penalised — the substance of what the candidate describes is what matters.
 
-**Scoring rubric (`scoring_rubric.md`)** — each criterion's 1–4 anchor cells were expanded from a single generic sentence to 2–3 QA-specific behavioral signals per level. The Process criterion's score-3 anchor includes a worked example so the model can recognise a documented multi-step review sequence regardless of how casually it is phrased.
+**Scoring rubric (`scoring_rubric.md`)** — each criterion's 1–4 anchor cells were expanded from a single generic sentence to 2–3 behavioral signals per level, with separate QA Behavioral Signals and SME Behavioral Signals columns. The Process and Instruction-Following criteria include worked examples. Role Fit anchors distinguish classroom-teacher-only backgrounds from candidates who have navigated CTE funding or compliance processes. The Communication anchor includes guidance on narrative Q1 storytelling vs. repetitive thin answers.
 
 **Transcription model (`config.py`)** — upgraded from `base` to `small` for better fidelity on conversational speech.
 
 **Temperature** — set to `0` in all API calls for deterministic, reproducible scoring.
 
-### Calibration results (3 QA candidates)
+### Calibration results (5 candidates: 3 QA + 2 SME)
 
 | | Old prompt | New prompt | HR ground truth |
 |:---|:---:|:---:|:---:|
-| Average MAE vs. HR | 1.07 | **0.87** | — |
-| Direction accuracy | 0 / 3 | **2 / 3** | — |
+| Average MAE vs. HR | 0.88 | **0.80** | — |
+| Direction accuracy | 1 / 5 | **3 / 5** | — |
+
+Candidates correctly classified by the new prompt: Maria Ferrara (QA → Advance ✓), Natalie Emery (SME → Advance ✓), Cynthia Taylor (SME → Advance ✓). Remaining gaps: Leslie Doucet (expertise visible on video but not in transcript text) and Emily Kobelenz-DiRienzo (one point above the Decline threshold).
 
 ### Running the calibration harness
 
