@@ -102,10 +102,10 @@ def _mae(ai: tuple[int, ...], hr: tuple[int, ...]) -> float:
 
 
 def _direction_correct(recommendation: str, hr_recommendation: str) -> bool:
-    hire = {"Advance", "Strong hire", "Hire"}
+    hire = {"Strong Advance", "Advance", "Strong hire", "Hire"}
     no_hire = {"Decline", "Strong no"}
     if hr_recommendation in hire:
-        return recommendation == "Advance"
+        return recommendation in {"Strong Advance", "Advance"}
     if hr_recommendation in no_hire:
         return recommendation == "Decline"
     return False

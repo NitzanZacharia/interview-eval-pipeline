@@ -53,6 +53,7 @@ F_NOTES           = "fldYtJUdvm7R2e6KN"   # multilineText
 # Airtable singleSelect names differ from pipeline labels — map at write time.
 # "Needs Human Review" has no Airtable equivalent; skip the field in that case.
 _RECOMMENDATION_MAP: dict[str, str | None] = {
+    "Strong Advance":      "Strong hire",
     "Advance":             "Hire",
     "Hold":                "Lean no",
     "Decline":             "Strong no",

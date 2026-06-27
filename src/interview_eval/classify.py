@@ -32,6 +32,14 @@ def classify_candidate(analysis: RubricAnalysis) -> ClassificationResult:
 
     if total_score >= 14:
         if role_fit >= 3:
+            if total_score >= 17:
+                return ClassificationResult(
+                    recommendation="Strong Advance",
+                    reason=(
+                        f"Total score {total_score} meets the strong threshold (>=17) "
+                        f"and Role Fit {role_fit} meets the gating criterion (>=3)."
+                    ),
+                )
             return ClassificationResult(
                 recommendation="Advance",
                 reason=(

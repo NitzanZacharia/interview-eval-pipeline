@@ -166,12 +166,13 @@ The pipeline produces four internal labels. These are translated to Airtable's s
 
 | Pipeline label | Airtable value | Notes |
 |:---|:---|:---|
-| `Advance` | `Hire` | Conservative default — promote to `Strong hire` manually if warranted |
+| `Strong Advance` | `Strong hire` | Total ≥ 17 AND Role Fit ≥ 3 |
+| `Advance` | `Hire` | Total 14–16 AND Role Fit ≥ 3 |
 | `Hold` | `Lean no` | |
 | `Decline` | `Strong no` | |
 | `Needs Human Review` | _(skipped)_ | No equivalent option exists; the Recommendation field is left blank |
 
-The mapping is defined in `_RECOMMENDATION_MAP` in `airtable_ingest.py`. To promote an `Advance` to `Strong hire` automatically (e.g. when `total_score >= 16`), edit that dict or add a scoring threshold there.
+The mapping is defined in `_RECOMMENDATION_MAP` in `airtable_ingest.py`. The `Strong Advance` / `Advance` split threshold (17) is set in `classify.py`.
 
 > **Note:** Transcription and scoring failures are never written back. Those records keep `Score 1` blank so they are retried on the next run.
 
