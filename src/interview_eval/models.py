@@ -73,7 +73,7 @@ class RubricAnalysis(BaseModel):
 
 
 class ClassificationResult(BaseModel):
-    recommendation: str  # "Advance", "Hold", "Decline", "Needs Human Review"
+    recommendation: str  # "Strong Advance", "Advance", "Hold", "Decline", "Needs Human Review"
     reason: str = ""
 
 

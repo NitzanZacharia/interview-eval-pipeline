@@ -1,0 +1,75 @@
+{
+  "candidate_id": "unknown-unknown-SME",
+  "first_name": "unknown",
+  "last_name": "unknown",
+  "job_type": "SME",
+  "evaluation_timestamp": "2026-06-26T13:18:37Z",
+  "transcript_metadata": {
+    "video_filename": "unknown-unknown-SME.mp4",
+    "video_duration_seconds": 154.730667,
+    "transcript_word_count": 459,
+    "duration_warning": null
+  },
+  "scores": {
+    "role_fit_and_relevant_experience": {
+      "score": 0,
+      "quotes": [
+        "for the last two summers, I worked at a market research firm, and my main part of the job was to ensure that over 500 documents got uploaded correctly to their website",
+        "I would go through it line by line to make sure that all of the formatting was correct, as well as the spelling and the grammar"
+      ],
+      "rationale": "The candidate has zero CTE program-level experience. She describes work at a market research firm uploading product documents \u2014 no mention of CTE pathways, course development, articulation agreements, funding compliance, certification standards, or any educational program administration. This fails the core bar for a CTE SME role entirely."
+    },
+    "domain_judgment": {
+      "score": 0,
+      "quotes": [
+        "I would definitely take my time, I would not rush through it, I would go through it line by line to make sure that all of the formatting was correct",
+        "sometimes there would be incorrect fonts, or there would be something that was bolded that shouldn't be bolded"
+      ],
+      "rationale": "The candidate demonstrates no knowledge of CTE-specific concepts: no mention of Perkins funding, industry certifications, articulation agreements, pathway standards, or CTE compliance frameworks. Her domain knowledge is limited to basic document formatting and grammar review, which is insufficient for a CTE SME role."
+    },
+    "process_and_methodology": {
+      "score": 1,
+      "quotes": [
+        "I would keep my process consistent by taking my time and working off a checklist",
+        "we kept like a very comprehensive spreadsheet, so I would just update the spreadsheet, and I would email the editing team and let them know this is what needs to be done"
+      ],
+      "rationale": "The candidate mentions a checklist and spreadsheet-based workflow for tracking issues and communicating with an editing team, which shows some basic process awareness. However, there is no structured methodology for CTE course review \u2014 no standards alignment process, no gap analysis framework, no understanding of how to turn compliance gaps into actionable revision direction."
+    },
+    "communication": {
+      "score": 2,
+      "quotes": [
+        "I would obviously just take care of the ones that I knew I would be able to fix, perhaps ask a colleague, bounce an idea of them to confirm",
+        "Thanks so much for reviewing my video, and I look forward to hearing from you soon"
+      ],
+      "rationale": "The candidate communicates in a generally clear and professional manner. Her responses are easy to follow, though somewhat vague and light on specifics. She stays on topic and is polite throughout. Communication is adequate but not notably strong or structured."
+    },
+    "instruction_following_and_professionalism": {
+      "score": 1,
+      "quotes": [
+        "The first one is asking this role reviews every activity in a lesson for errors before it reaches a classroom",
+        "Tell us your experience about catching content or quality errors",
+        "the last question asks when you find an issue"
+      ],
+      "rationale": "The candidate answered three questions, but they were the wrong three questions \u2014 she appears to have received or answered a QA reviewer question set rather than the CTE SME questions provided. She did not address any of the three CTE-specific questions (building/coordinating a CTE program, describing a CTE pathway, or reviewing a CTE course against standards). This is a significant instruction-following failure for this role."
+    }
+  },
+  "total_score": 4,
+  "recommendation": "Decline",
+  "recommendation_reason": "Hard fail: candidate did not answer all questions.",
+  "hard_fail_flags": {
+    "did_not_answer_all_questions": true,
+    "lacks_core_experience": true,
+    "cannot_communicate_clearly": false
+  },
+  "confidence_score": 0.88,
+  "overall_summary": "Emily answered a completely different set of interview questions than the three CTE SME questions provided. She responded to what appears to be a QA reviewer screener, not the CTE SME screener. As a result, she provided zero evidence of CTE program-level experience, pathway knowledge, standards alignment, or compliance expertise. Her only relevant background is document QA at a market research firm, which does not meet the core bar for a CTE SME role. Two hard-fail conditions are triggered: she did not answer the assigned questions, and she lacks the core CTE experience required. Confidence is slightly reduced because it is possible she received incorrect questions, which would be an administrative issue rather than a candidate failure \u2014 but as evaluated against the CTE SME rubric, she cannot advance.",
+  "system_notes": {
+    "model_used": "claude-sonnet-4-6",
+    "rubric_version": "scoring_rubric.md",
+    "pipeline_version": "0.1.0",
+    "limitations": [
+      "Transcription quality may affect scoring accuracy.",
+      "Scores reflect rubric criteria only, not holistic assessment."
+    ]
+  }
+}

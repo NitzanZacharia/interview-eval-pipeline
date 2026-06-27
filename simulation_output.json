@@ -1,0 +1,85 @@
+[
+  {
+    "candidate_id": "sam-carver-QA",
+    "first_name": "sam",
+    "last_name": "carver",
+    "job_type": "QA",
+    "evaluation_timestamp": "2026-06-27T15:52:12Z",
+    "transcript_metadata": {
+      "video_filename": "sam-carver-QA.mp4",
+      "video_duration_seconds": 281.781667,
+      "transcript_word_count": 950,
+      "duration_warning": null
+    },
+    "scores": {
+      "role_fit_and_relevant_experience": {
+        "score": 3,
+        "quotes": [
+          "I am the original unpaid intern",
+          "my experience is pretty honed in on Novodea right now",
+          "I do have the capabilities within CG3 to do that",
+          "She got back to me and said, you know what, you can handle that by yourself"
+        ],
+        "rationale": "Sam has direct, hands-on experience reviewing K-12 lesson content in what appears to be the exact platform this role uses (Novodea/CG3). The experience is real and specific \u2014 they describe actual tasks, tools, and workflows. However, the role was unpaid and intern-level, which limits the depth and breadth of experience. They meet the core bar for QA content review but haven't demonstrated experience at scale or in a more senior capacity."
+      },
+      "domain_judgment": {
+        "score": 3,
+        "quotes": [
+          "making sure the activity type matches the questions",
+          "the question was based on this image, what's the answer and the image is behind all of the multiple choice answers",
+          "making sure the age of the students on the screen match the age of the students working through the screen",
+          "a head faced the correct way on a coin, you know, right or left"
+        ],
+        "rationale": "Sam demonstrates genuine instinct for spotting content errors \u2014 they caught a meaningful UX/content mismatch (image obscured by answer choices), think about age-appropriateness of on-screen characters, and notice fine details like coin orientation. These are real QA sensibilities. The example is concrete and shows they understand how errors affect the student experience. Slightly below a 4 because the range of error types discussed is somewhat narrow and tied to one platform."
+      },
+      "process_and_methodology": {
+        "score": 3,
+        "quotes": [
+          "I like to start at the top, go straight down, you know, top to bottom, left to right, default to tier three",
+          "I like to make sure that I keep my list of known bugs next to me",
+          "I like to do 30 10 split. So I'll work for 30 minutes. If I run into an issue, I'll work on that issue for 10 minutes",
+          "I'll have written down everything I've tried to see if it worked or not on various issues"
+        ],
+        "rationale": "Sam describes a structured review process: familiarize with context first, then systematic top-to-bottom review with a reference checklist, and a defined time-boxing method (30/10 split) for troubleshooting. These are genuine methodological habits. The checklist approach and the 30/10 rule show consistency-oriented thinking. The process is solid but described somewhat informally and lacks detail on how they document findings or ensure consistency across many lessons at scale."
+      },
+      "communication": {
+        "score": 2,
+        "quotes": [
+          "So yeah, my experience is pretty honed in on Novodea right now",
+          "So yeah, I like to make sure that I keep my list next to me, my what's about me",
+          "you know, 10, 10, 10, so that whole entire 30 minute block"
+        ],
+        "rationale": "Sam communicates conversationally and the substance is there, but the delivery is disorganized and hard to follow in places. Sentences trail off, the 30/10 explanation becomes confusing (the math doesn't add up clearly), and there are filler phrases throughout. The content is recoverable but requires effort from the listener. This is a 2 rather than a 3 because the disorganization meaningfully impedes clarity on a role where precise communication of issues is core."
+      },
+      "instruction_following_and_professionalism": {
+        "score": 3,
+        "quotes": [
+          "first thing I like to do before editing a lesson",
+          "an example of how I did catch an error and how I handled it would be",
+          "the next question is kind of a perfect example of something that I could fix myself",
+          "I'm Sam Carver and I look forward to hearing from you guys"
+        ],
+        "rationale": "Sam addressed all three questions, stayed on topic, and maintained a professional tone throughout. They explicitly signposted transitions between questions, which shows awareness of the structure. The submission is complete and delivered professionally. Minor deduction because the answer to question 3 (bug ticket write-up specifics) was thin \u2014 they described the decision process but didn't explain how they actually write up a ticket so someone else can act without follow-up questions."
+      }
+    },
+    "total_score": 14,
+    "recommendation": "Advance",
+    "recommendation_reason": "Total score 14 meets the threshold (>=14) and Role Fit 3 meets the gating criterion (>=3).",
+    "hard_fail_flags": {
+      "did_not_answer_all_questions": false,
+      "lacks_core_experience": false,
+      "cannot_communicate_clearly": false
+    },
+    "confidence_score": 0.78,
+    "overall_summary": "Sam Carver is a credible QA candidate with direct, platform-specific experience at Novodea. Their review process is structured and their error-catching instincts are genuine, as evidenced by a concrete and relevant example. The main weaknesses are communication clarity (rambling delivery, unclear math in the 30/10 explanation) and a thin answer on bug ticket documentation \u2014 the role requires precise written communication of issues, and that wasn't fully demonstrated. The unpaid intern context limits confidence in their ability to operate independently at scale, but the foundational QA skills are present. Overall a borderline advance \u2014 strong enough in substance to merit consideration, with communication as the primary risk factor.",
+    "system_notes": {
+      "model_used": "claude-sonnet-4-6",
+      "rubric_version": "scoring_rubric.md",
+      "pipeline_version": "0.1.0",
+      "limitations": [
+        "Transcription quality may affect scoring accuracy.",
+        "Scores reflect rubric criteria only, not holistic assessment."
+      ]
+    }
+  }
+]
