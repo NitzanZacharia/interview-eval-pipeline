@@ -60,6 +60,22 @@ _RECOMMENDATION_MAP: dict[str, str | None] = {
     "Needs Human Review":  None,
 }
 
+# ---------------------------------------------------------------------------
+# Applications table — stage advancement
+# ---------------------------------------------------------------------------
+APPLICATIONS_TABLE = "tblEsA1ZVdJdRLbs1"
+F_STAGE            = "fldLdOo2ZFgu8iaV5"   # singleSelect in Applications
+
+# Maps pipeline recommendation labels to Applications Stage choice names.
+# None = no stage movement (leave the current stage unchanged).
+_STAGE_MAP: dict[str, str | None] = {
+    "Strong Advance":     "First Interview",
+    "Advance":            "First Interview",
+    "Hold":               "Hold",
+    "Decline":            "Discontinued",
+    "Needs Human Review": None,
+}
+
 # Round type singleSelect option IDs (confirmed from live data)
 ROUND_VIDEO_SUBMISSION  = "sel11RPB63d9K0hFG"
 ROUND_PRACTICAL_TASK    = "selleUvcssoa4WCXs"
@@ -458,3 +474,21 @@ def write_scores_to_airtable(
         )
 
     _patch(url, {"fields": fields}, api_key)
+
+
+def advance_application_stage(
+    application_record_ids: list[str],
+    recommendation: str,
+    api_key: str,
+) -> None:
+    """PATCH the Stage field on each linked Application record.
+
+    Moves the candidate to the next pipeline stage based on the AI recommendation.
+    No-ops if the recommendation has no stage mapping (Hold or Needs Human Review).
+    """
+    stage = _STAGE_MAP.get(recommendation)
+    if stage is None:
+        return
+    for app_id in application_record_ids:
+        url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{APPLICATIONS_TABLE}/{app_id}"
+        _patch(url, {"fields": {F_STAGE: stage}}, api_key)

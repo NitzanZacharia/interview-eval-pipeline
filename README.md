@@ -161,7 +161,17 @@ python scripts/simulate_airtable_pipeline.py --limit 3
 python scripts/simulate_airtable_pipeline.py --limit 3 --dry-run  # read-only
 ```
 
-On success the record receives all five dimension scores, a Weighted Score (recalculated automatically by Airtable's formula field), and a Recommendation. Once Score 1 is written, that record no longer matches the "unscored" filter, so it will not be re-fetched on future runs.
+On success the Candidate Submission record receives all five dimension scores, a Recommendation, and notes. The linked Application record's Stage is also advanced automatically:
+
+| AI recommendation | Application Stage |
+|:---|:---|
+| `Strong Advance` | First Interview |
+| `Advance` | First Interview |
+| `Hold` | Hold |
+| `Decline` | Discontinued |
+| `Needs Human Review` | *(unchanged — manual review required)* |
+
+Once Score 1 is written, that Submission record no longer matches the "unscored" filter and will not be re-fetched on future runs.
 
 #### Recommendation mapping
 

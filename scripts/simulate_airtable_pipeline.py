@@ -47,7 +47,10 @@ _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "src"))
 
 from interview_eval.airtable_ingest import (
+    F_APPLICATION,
     F_RUBRIC_LINK,
+    _STAGE_MAP,
+    advance_application_stage,
     airtable_record_to_candidate_file,
     fetch_rubric_text,
     fetch_single_record,
@@ -228,6 +231,12 @@ def _process_record(
         try:
             write_scores_to_airtable(result_obj, at_record_id, airtable_key)
             print(f"  Scores written to Airtable record {at_record_id}.")
+            app_ids: list[str] = record.get("fields", {}).get(F_APPLICATION, [])
+            if app_ids:
+                advance_application_stage(app_ids, result_obj.recommendation, airtable_key)
+                new_stage = _STAGE_MAP.get(result_obj.recommendation)
+                if new_stage:
+                    print(f"  Stage updated    → {new_stage}")
         except Exception as exc:
             print(
                 f"  WARNING: Airtable write failed for {at_record_id}: {exc}\n"
@@ -308,7 +317,7 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 60)
-    print("  Airtable Pipeline — Read-Only Simulation")
+    print("  Airtable Pipeline")
     print("=" * 60)
 
     # ── Fetch records ─────────────────────────────────────────────────────
