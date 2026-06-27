@@ -1,78 +1,77 @@
 [
   {
-    "candidate_id": "natalie-emery-SME",
-    "first_name": "natalie",
-    "last_name": "emery",
-    "job_type": "SME",
-    "evaluation_timestamp": "2026-06-27T07:37:57Z",
+    "candidate_id": "sam-carver-QA",
+    "first_name": "sam",
+    "last_name": "carver",
+    "job_type": "QA",
+    "evaluation_timestamp": "2026-06-27T15:52:12Z",
     "transcript_metadata": {
-      "video_filename": "natalie-emery-SME.mp4",
-      "video_duration_seconds": 340.112789,
-      "transcript_word_count": 799,
+      "video_filename": "sam-carver-QA.mp4",
+      "video_duration_seconds": 281.781667,
+      "transcript_word_count": 950,
       "duration_warning": null
     },
     "scores": {
       "role_fit_and_relevant_experience": {
-        "score": 2,
+        "score": 3,
         "quotes": [
-          "I was asked to teach a construction technology course due to high enrollment and a lack of instructors",
-          "there was no curriculum for me to follow. I had to start from scratch",
-          "Students passed safety tests in this course, but they did not pass any recognized credentials for the course",
-          "in order to add certifications in our district, we had to get approval and funding from CTE supervisors, which wasn't always easy to do"
+          "I am the original unpaid intern",
+          "my experience is pretty honed in on Novodea right now",
+          "I do have the capabilities within CG3 to do that",
+          "She got back to me and said, you know what, you can handle that by yourself"
         ],
-        "rationale": "Natalie describes building a course from scratch and navigating community partnerships and funding workarounds, which shows some program-level initiative. However, her experience is primarily at the classroom/teacher level rather than the program-coordination or compliance level. She acknowledges she did not pursue recognized credentials for students and was not the one navigating the formal CTE compliance and articulation processes \u2014 she was blocked by district-level gatekeepers. There is no mention of articulation agreements, formal Perkins compliance work, or program-level CTE administration. This is below the core bar for a CTE SME role focused on QA and compliance review."
+        "rationale": "Sam has direct, hands-on experience reviewing K-12 lesson content in what appears to be the exact platform this role uses (Novodea/CG3). The experience is real and specific \u2014 they describe actual tasks, tools, and workflows. However, the role was unpaid and intern-level, which limits the depth and breadth of experience. They meet the core bar for QA content review but haven't demonstrated experience at scale or in a more senior capacity."
       },
       "domain_judgment": {
-        "score": 2,
+        "score": 3,
         "quotes": [
-          "Looking back, it would be beneficial to have a certification like the NCCER Core in Construction Technology certification",
-          "I would first find and review the course standards",
-          "I would look and see if there's a student-sponsored association associated with the class and then look for certification tests",
-          "I would review the financial requirements of everything that needs to be purchased to ensure that Perkins funding guidelines are in compliance"
+          "making sure the activity type matches the questions",
+          "the question was based on this image, what's the answer and the image is behind all of the multiple choice answers",
+          "making sure the age of the students on the screen match the age of the students working through the screen",
+          "a head faced the correct way on a coin, you know, right or left"
         ],
-        "rationale": "Natalie demonstrates awareness of key CTE domain concepts \u2014 standards alignment, student organizations (CTSOs), industry certifications, and Perkins funding \u2014 but her knowledge reads as surface-level familiarity rather than deep operational expertise. She names Perkins compliance and NCCER but does not demonstrate how she has actually applied these in a compliance or review context. Her domain vocabulary is present but not substantiated with specific examples of navigating articulation, funding audits, or certification mapping in practice."
+        "rationale": "Sam demonstrates genuine instinct for spotting content errors \u2014 they caught a meaningful UX/content mismatch (image obscured by answer choices), think about age-appropriateness of on-screen characters, and notice fine details like coin orientation. These are real QA sensibilities. The example is concrete and shows they understand how errors affect the student experience. Slightly below a 4 because the range of error types discussed is somewhat narrow and tied to one platform."
       },
       "process_and_methodology": {
         "score": 3,
         "quotes": [
-          "I would first locate and review the suggested curriculum materials associated with the course",
-          "I would check to make sure that they're aligned with the standards and take notes of any standards not included",
-          "I would make sure that the assignments, assessments, and projects are mapped to the standards",
-          "I would evaluate the certification tests to map them to make sure that all the skills on the tests are mapped into the standards and the curriculum",
-          "I would review the financial requirements of everything that needs to be purchased to ensure that Perkins funding guidelines are in compliance",
-          "I would document all of the gaps clearly and concisely so that the writers can fill in the gaps"
+          "I like to start at the top, go straight down, you know, top to bottom, left to right, default to tier three",
+          "I like to make sure that I keep my list of known bugs next to me",
+          "I like to do 30 10 split. So I'll work for 30 minutes. If I run into an issue, I'll work on that issue for 10 minutes",
+          "I'll have written down everything I've tried to see if it worked or not on various issues"
         ],
-        "rationale": "For Question 3, Natalie lays out a reasonably structured, multi-step review process: materials review, standards alignment check, assignment/assessment mapping, CTSO integration, certification mapping, Perkins compliance check, and gap documentation. This is a logical and fairly comprehensive sequence. It is not deeply sophisticated \u2014 she does not describe a rubric, a gap-analysis template, or how she would prioritize or communicate revision direction \u2014 but the process is coherent and covers the major bases expected for a CTE course review."
+        "rationale": "Sam describes a structured review process: familiarize with context first, then systematic top-to-bottom review with a reference checklist, and a defined time-boxing method (30/10 split) for troubleshooting. These are genuine methodological habits. The checklist approach and the 30/10 rule show consistency-oriented thinking. The process is solid but described somewhat informally and lacks detail on how they document findings or ensure consistency across many lessons at scale."
       },
       "communication": {
-        "score": 3,
+        "score": 2,
         "quotes": [
-          "Creating the lectures for this course wasn't the hard part. It was helping students make real-world connections with the content that really challenged me",
-          "One pathway I know deeply is arts, audio, visual technology, and communications. This pathway encompasses all the ways that humans communicate with each other",
-          "I would first locate and review the suggested curriculum materials associated with the course. And once I found those, I would check to make sure that they're aligned with the standards"
+          "So yeah, my experience is pretty honed in on Novodea right now",
+          "So yeah, I like to make sure that I keep my list next to me, my what's about me",
+          "you know, 10, 10, 10, so that whole entire 30 minute block"
         ],
-        "rationale": "Natalie communicates clearly and in an organized manner. Her answers follow a logical sequence and she uses plain language effectively. Question 1 is somewhat narrative and anecdote-heavy, which dilutes the professional focus, but Questions 2 and 3 are more structured and on-point. She is easy to follow throughout and does not ramble excessively. Communication is solid but not exceptional \u2014 she does not use precise professional terminology consistently or demonstrate particularly crisp synthesis."
+        "rationale": "Sam communicates conversationally and the substance is there, but the delivery is disorganized and hard to follow in places. Sentences trail off, the 30/10 explanation becomes confusing (the math doesn't add up clearly), and there are filler phrases throughout. The content is recoverable but requires effort from the listener. This is a 2 rather than a 3 because the disorganization meaningfully impedes clarity on a role where precise communication of issues is core."
       },
       "instruction_following_and_professionalism": {
-        "score": 4,
+        "score": 3,
         "quotes": [
-          "This video captures my responses to the three questions provided",
-          "Question one...Second question...Question three",
-          "Thank you so much for this opportunity and I hope to hear from you soon"
+          "first thing I like to do before editing a lesson",
+          "an example of how I did catch an error and how I handled it would be",
+          "the next question is kind of a perfect example of something that I could fix myself",
+          "I'm Sam Carver and I look forward to hearing from you guys"
         ],
-        "rationale": "Natalie explicitly labels and answers all three questions in order. Her delivery is professional, warm, and appropriately concise. She opens with a self-introduction and closes with a courteous sign-off. No hard-fail conditions apply on this dimension."
+        "rationale": "Sam addressed all three questions, stayed on topic, and maintained a professional tone throughout. They explicitly signposted transitions between questions, which shows awareness of the structure. The submission is complete and delivered professionally. Minor deduction because the answer to question 3 (bug ticket write-up specifics) was thin \u2014 they described the decision process but didn't explain how they actually write up a ticket so someone else can act without follow-up questions."
       }
     },
     "total_score": 14,
-    "recommendation": "Hold",
-    "recommendation_reason": "Total score 14 meets the threshold (>=14) but Role Fit 2 does not meet the gating criterion (>=3).",
+    "recommendation": "Advance",
+    "recommendation_reason": "Total score 14 meets the threshold (>=14) and Role Fit 3 meets the gating criterion (>=3).",
     "hard_fail_flags": {
       "did_not_answer_all_questions": false,
       "lacks_core_experience": false,
       "cannot_communicate_clearly": false
     },
-    "confidence_score": 0.82,
-    "overall_summary": "Natalie Emery is a classroom-level CTE teacher who built a construction technology course from scratch and shows genuine initiative in community partnerships and resourcefulness. However, her background does not clearly meet the program-level CTE coordination and compliance bar required for this SME role. She is aware of key CTE concepts (Perkins, NCCER, CTSOs, articulation) but does not demonstrate hands-on experience navigating these systems in a compliance or QA capacity. Her review methodology in Question 3 is structured and covers the right bases, making her a reasonable candidate for a content-review support role, but her domain expertise depth is a meaningful gap for a senior SME position. No hard-fail conditions apply. Confidence is high given a complete, clear transcript.",
+    "confidence_score": 0.78,
+    "overall_summary": "Sam Carver is a credible QA candidate with direct, platform-specific experience at Novodea. Their review process is structured and their error-catching instincts are genuine, as evidenced by a concrete and relevant example. The main weaknesses are communication clarity (rambling delivery, unclear math in the 30/10 explanation) and a thin answer on bug ticket documentation \u2014 the role requires precise written communication of issues, and that wasn't fully demonstrated. The unpaid intern context limits confidence in their ability to operate independently at scale, but the foundational QA skills are present. Overall a borderline advance \u2014 strong enough in substance to merit consideration, with communication as the primary risk factor.",
     "system_notes": {
       "model_used": "claude-sonnet-4-6",
       "rubric_version": "scoring_rubric.md",
