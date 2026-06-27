@@ -1,4 +1,6 @@
 candidate,job_type,baseline_scores,baseline_total,baseline_rec,new_scores,new_total,new_rec,hr_scores,hr_total,hr_rec,baseline_mae,new_mae,mae_delta,baseline_direction_correct,new_direction_correct
 Leslie Doucet,QA,"2,2,2,2,3",11,Hold,"2,2,2,2,3",11,Hold,"4,4,3,4,3",18,Strong hire,1.4,1.4,0.0,False,False
 Maria Ferrara,QA,"2,2,2,3,3",12,Hold,"3,2,3,3,3",14,Advance,"3,3,4,4,4",18,Strong hire,1.2,0.8,0.4,False,True
-Emily Kobelenz-DiRienzo,QA,"2,2,2,3,4",13,Hold,"2,1,2,2,3",10,Decline,"1,2,2,2,3",10,Strong no,0.6,0.4,0.2,False,True
+Emily Kobelenz-DiRienzo,QA,"2,2,2,3,4",13,Hold,"2,1,2,3,3",11,Hold,"1,2,2,2,3",10,Strong no,0.6,0.6,0.0,False,False
+Natalie Emery,SME,"2,2,3,3,4",14,Hold,"3,3,3,3,3",15,Advance,"3,3,4,4,4",18,Strong hire,0.8,0.6,0.2,False,True
+Cynthia Taylor,SME,"4,3,3,3,4",17,Advance,"4,3,3,3,3",16,Advance,"3,3,3,4,4",17,Hire,0.4,0.6,-0.2,True,True

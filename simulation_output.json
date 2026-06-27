@@ -1,71 +1,78 @@
 [
   {
-    "candidate_id": "leslie-doucet-QA",
-    "first_name": "leslie",
-    "last_name": "doucet",
-    "job_type": "QA",
-    "evaluation_timestamp": "2026-06-26T14:57:26Z",
+    "candidate_id": "natalie-emery-SME",
+    "first_name": "natalie",
+    "last_name": "emery",
+    "job_type": "SME",
+    "evaluation_timestamp": "2026-06-27T07:37:57Z",
     "transcript_metadata": {
-      "video_filename": "leslie-doucet-QA.mp4",
-      "video_duration_seconds": 223.818542,
-      "transcript_word_count": 636,
+      "video_filename": "natalie-emery-SME.mp4",
+      "video_duration_seconds": 340.112789,
+      "transcript_word_count": 799,
       "duration_warning": null
     },
     "scores": {
       "role_fit_and_relevant_experience": {
         "score": 2,
         "quotes": [
-          "I have been a teacher for 29 years in English",
-          "I've also worked for a company where I was a content director, a content developer. Um, I'm a subject matter expert."
+          "I was asked to teach a construction technology course due to high enrollment and a lack of instructors",
+          "there was no curriculum for me to follow. I had to start from scratch",
+          "Students passed safety tests in this course, but they did not pass any recognized credentials for the course",
+          "in order to add certifications in our district, we had to get approval and funding from CTE supervisors, which wasn't always easy to do"
         ],
-        "rationale": "The candidate has a long teaching career and some content development experience, which provides a baseline for content review. However, the background is primarily classroom teaching, not dedicated QA work on digital or educational materials at scale. The content director/developer role is mentioned but not elaborated upon, making it difficult to assess its relevance. The core bar for QA \u2014 real, systematic experience reviewing content or materials for accuracy in a professional QA capacity \u2014 is only partially met."
+        "rationale": "Natalie describes building a course from scratch and navigating community partnerships and funding workarounds, which shows some program-level initiative. However, her experience is primarily at the classroom/teacher level rather than the program-coordination or compliance level. She acknowledges she did not pursue recognized credentials for students and was not the one navigating the formal CTE compliance and articulation processes \u2014 she was blocked by district-level gatekeepers. There is no mention of articulation agreements, formal Perkins compliance work, or program-level CTE administration. This is below the core bar for a CTE SME role focused on QA and compliance review."
       },
       "domain_judgment": {
         "score": 2,
         "quotes": [
-          "the assessments didn't. They didn't align with what we were actually teaching",
-          "making sure that the objectives align with the standards that the standards are aligned",
-          "spelling and grammar and accuracy"
+          "Looking back, it would be beneficial to have a certification like the NCCER Core in Construction Technology certification",
+          "I would first find and review the course standards",
+          "I would look and see if there's a student-sponsored association associated with the class and then look for certification tests",
+          "I would review the financial requirements of everything that needs to be purchased to ensure that Perkins funding guidelines are in compliance"
         ],
-        "rationale": "The candidate demonstrates awareness of alignment between objectives, standards, and assessments, and identifies spelling/grammar/accuracy as error types. However, the examples are surface-level and classroom-centric. There is no mention of digital-specific error types (broken links, rendering issues, metadata errors, accessibility), no discussion of content accuracy beyond grammar, and no evidence of instinct for the broader range of errors a QA reviewer would catch in a digital lesson platform."
+        "rationale": "Natalie demonstrates awareness of key CTE domain concepts \u2014 standards alignment, student organizations (CTSOs), industry certifications, and Perkins funding \u2014 but her knowledge reads as surface-level familiarity rather than deep operational expertise. She names Perkins compliance and NCCER but does not demonstrate how she has actually applied these in a compliance or review context. Her domain vocabulary is present but not substantiated with specific examples of navigating articulation, funding audits, or certification mapping in practice."
       },
       "process_and_methodology": {
-        "score": 2,
-        "quotes": [
-          "The very first thing we have to do is look at it in its entirety",
-          "We have checklists. I have a checklist for almost everything that I do, literally a list for everything I do",
-          "if it's something that I can fix, uh, on whatever platform it is that I'm using, then I would go ahead and fix it"
-        ],
-        "rationale": "The candidate mentions using checklists and reviewing lessons holistically, which are positive signals. However, the process described is vague \u2014 no detail is given about what the checklist contains, how it is structured, or how reviews are sequenced. The bug triage answer is particularly underdeveloped: the candidate offers no framework for deciding what goes to a developer versus what they fix themselves, and no description of how to write a clear, actionable bug ticket."
-      },
-      "communication": {
-        "score": 2,
-        "quotes": [
-          "I say, we, my team and myself have put to, um, you know, really have to get into it",
-          "I feel like if it, if it's something that I can fix, uh, on whatever platform it is that I'm using",
-          "I think I've answered the 3 questions. I hope"
-        ],
-        "rationale": "The candidate is personable and easy to follow at a high level, but answers are frequently vague, trail off, and lack specificity. Filler language and incomplete sentences appear throughout. The substance of answers is thin, making it hard to extract concrete information. Communication is functional but not strong enough to inspire confidence in a QA role where precision and clarity in written documentation are essential."
-      },
-      "instruction_following_and_professionalism": {
         "score": 3,
         "quotes": [
-          "I wanted to make sure that I keep this under five minutes. I know I have three questions that I need to answer",
-          "I think I've answered the 3 questions. I hope, uh, I'm looking forward to hearing back from you. Thank you so much."
+          "I would first locate and review the suggested curriculum materials associated with the course",
+          "I would check to make sure that they're aligned with the standards and take notes of any standards not included",
+          "I would make sure that the assignments, assessments, and projects are mapped to the standards",
+          "I would evaluate the certification tests to map them to make sure that all the skills on the tests are mapped into the standards and the curriculum",
+          "I would review the financial requirements of everything that needs to be purchased to ensure that Perkins funding guidelines are in compliance",
+          "I would document all of the gaps clearly and concisely so that the writers can fill in the gaps"
         ],
-        "rationale": "The candidate addressed all three questions in sequence, demonstrated awareness of the time constraint, and maintained a professional and courteous tone throughout. Delivery was conversational but not unprofessional. Minor deduction for the uncertain closing ('I think I've answered the 3 questions. I hope') which slightly undermines confidence, but overall instruction-following was solid."
+        "rationale": "For Question 3, Natalie lays out a reasonably structured, multi-step review process: materials review, standards alignment check, assignment/assessment mapping, CTSO integration, certification mapping, Perkins compliance check, and gap documentation. This is a logical and fairly comprehensive sequence. It is not deeply sophisticated \u2014 she does not describe a rubric, a gap-analysis template, or how she would prioritize or communicate revision direction \u2014 but the process is coherent and covers the major bases expected for a CTE course review."
+      },
+      "communication": {
+        "score": 3,
+        "quotes": [
+          "Creating the lectures for this course wasn't the hard part. It was helping students make real-world connections with the content that really challenged me",
+          "One pathway I know deeply is arts, audio, visual technology, and communications. This pathway encompasses all the ways that humans communicate with each other",
+          "I would first locate and review the suggested curriculum materials associated with the course. And once I found those, I would check to make sure that they're aligned with the standards"
+        ],
+        "rationale": "Natalie communicates clearly and in an organized manner. Her answers follow a logical sequence and she uses plain language effectively. Question 1 is somewhat narrative and anecdote-heavy, which dilutes the professional focus, but Questions 2 and 3 are more structured and on-point. She is easy to follow throughout and does not ramble excessively. Communication is solid but not exceptional \u2014 she does not use precise professional terminology consistently or demonstrate particularly crisp synthesis."
+      },
+      "instruction_following_and_professionalism": {
+        "score": 4,
+        "quotes": [
+          "This video captures my responses to the three questions provided",
+          "Question one...Second question...Question three",
+          "Thank you so much for this opportunity and I hope to hear from you soon"
+        ],
+        "rationale": "Natalie explicitly labels and answers all three questions in order. Her delivery is professional, warm, and appropriately concise. She opens with a self-introduction and closes with a courteous sign-off. No hard-fail conditions apply on this dimension."
       }
     },
-    "total_score": 11,
+    "total_score": 14,
     "recommendation": "Hold",
-    "recommendation_reason": "Total score 11 is borderline (11-13).",
+    "recommendation_reason": "Total score 14 meets the threshold (>=14) but Role Fit 2 does not meet the gating criterion (>=3).",
     "hard_fail_flags": {
       "did_not_answer_all_questions": false,
       "lacks_core_experience": false,
       "cannot_communicate_clearly": false
     },
-    "confidence_score": 0.78,
-    "overall_summary": "Leslie presents as a long-tenured English teacher with genuine familiarity with curriculum review and content alignment, but her responses lack the specificity and depth expected for a dedicated QA role. Her process descriptions are high-level and her bug triage answer is underdeveloped \u2014 she does not describe how to write an actionable ticket or articulate a clear decision framework. Domain knowledge is classroom-oriented rather than QA-oriented. She does not hard-fail on any criterion, but scores cluster at 2 across most dimensions, indicating a developing rather than strong candidate. Confidence in this evaluation is moderately high given a complete transcript, though the brevity of some answers limits full assessment of her capabilities.",
+    "confidence_score": 0.82,
+    "overall_summary": "Natalie Emery is a classroom-level CTE teacher who built a construction technology course from scratch and shows genuine initiative in community partnerships and resourcefulness. However, her background does not clearly meet the program-level CTE coordination and compliance bar required for this SME role. She is aware of key CTE concepts (Perkins, NCCER, CTSOs, articulation) but does not demonstrate hands-on experience navigating these systems in a compliance or QA capacity. Her review methodology in Question 3 is structured and covers the right bases, making her a reasonable candidate for a content-review support role, but her domain expertise depth is a meaningful gap for a senior SME position. No hard-fail conditions apply. Confidence is high given a complete, clear transcript.",
     "system_notes": {
       "model_used": "claude-sonnet-4-6",
       "rubric_version": "scoring_rubric.md",
