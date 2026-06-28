@@ -4,74 +4,71 @@
     "first_name": "sam",
     "last_name": "carver",
     "job_type": "QA",
-    "evaluation_timestamp": "2026-06-27T15:52:12Z",
+    "evaluation_timestamp": "2026-06-27T16:51:32Z",
     "transcript_metadata": {
       "video_filename": "sam-carver-QA.mp4",
       "video_duration_seconds": 281.781667,
-      "transcript_word_count": 950,
+      "transcript_word_count": 949,
       "duration_warning": null
     },
     "scores": {
       "role_fit_and_relevant_experience": {
-        "score": 3,
+        "score": 2,
         "quotes": [
-          "I am the original unpaid intern",
-          "my experience is pretty honed in on Novodea right now",
-          "I do have the capabilities within CG3 to do that",
-          "She got back to me and said, you know what, you can handle that by yourself"
+          "my experience is pretty honed in on Novedia right now. I am the original unpaid intern.",
+          "it was a quick Slack message over to Shawnee and I said, you know, hey, I could put in a ticket for this or should I change activity type"
         ],
-        "rationale": "Sam has direct, hands-on experience reviewing K-12 lesson content in what appears to be the exact platform this role uses (Novodea/CG3). The experience is real and specific \u2014 they describe actual tasks, tools, and workflows. However, the role was unpaid and intern-level, which limits the depth and breadth of experience. They meet the core bar for QA content review but haven't demonstrated experience at scale or in a more senior capacity."
+        "rationale": "The candidate's experience is limited to an unpaid internship at the same company (Novidia/Novedia). While this demonstrates some direct exposure to the platform and QA tasks, it is a narrow and junior foundation. There is no mention of prior QA roles, content review experience in other contexts, or broader educational materials work. The bar for the role requires real experience reviewing content or materials for accuracy \u2014 this candidate has some, but it is minimal and entirely within one internal context."
       },
       "domain_judgment": {
         "score": 3,
         "quotes": [
-          "making sure the activity type matches the questions",
-          "the question was based on this image, what's the answer and the image is behind all of the multiple choice answers",
           "making sure the age of the students on the screen match the age of the students working through the screen",
-          "a head faced the correct way on a coin, you know, right or left"
+          "the question and the activity type didn't quite match... the question was based on this image, what's the answer and the image is behind all of the multiple choice answers",
+          "a head faced the correct way on a coin, you know, right or left",
+          "the 404 issue I've seen with a lot of SMEs can actually be solved with a reupload of the activity"
         ],
-        "rationale": "Sam demonstrates genuine instinct for spotting content errors \u2014 they caught a meaningful UX/content mismatch (image obscured by answer choices), think about age-appropriateness of on-screen characters, and notice fine details like coin orientation. These are real QA sensibilities. The example is concrete and shows they understand how errors affect the student experience. Slightly below a 4 because the range of error types discussed is somewhat narrow and tied to one platform."
+        "rationale": "The candidate demonstrates genuine instinct for spotting content and UX errors \u2014 catching image-question mismatches, audio alignment issues, age-appropriateness of on-screen characters, and platform-specific bugs like 404 errors. These are specific, real examples that show they understand what can go wrong in a K-12 digital lesson context. The coin orientation detail shows attention to subtle accuracy errors. However, the domain knowledge is platform-specific and does not extend to broader educational content accuracy (e.g., factual correctness, curriculum alignment). Solid but not exceptional."
       },
       "process_and_methodology": {
         "score": 3,
         "quotes": [
           "I like to start at the top, go straight down, you know, top to bottom, left to right, default to tier three",
           "I like to make sure that I keep my list of known bugs next to me",
-          "I like to do 30 10 split. So I'll work for 30 minutes. If I run into an issue, I'll work on that issue for 10 minutes",
+          "I like to do 3010 split. So I'll work for 30 minutes. If I run into an issue, I'll work on that issue for 10 minutes",
           "I'll have written down everything I've tried to see if it worked or not on various issues"
         ],
-        "rationale": "Sam describes a structured review process: familiarize with context first, then systematic top-to-bottom review with a reference checklist, and a defined time-boxing method (30/10 split) for troubleshooting. These are genuine methodological habits. The checklist approach and the 30/10 rule show consistency-oriented thinking. The process is solid but described somewhat informally and lacks detail on how they document findings or ensure consistency across many lessons at scale."
+        "rationale": "The candidate describes a structured review process: familiarizing with style guides and SME notes first, then systematic top-to-bottom review with a checklist of known error types. The 30-10 time-boxing method for troubleshooting is a concrete, self-developed methodology that shows disciplined problem-solving. Documentation of attempted fixes before escalating is also a sound practice. The process is real and functional, though it lacks formality (e.g., no mention of a QA checklist tool, tracking system, or reproducibility steps in bug tickets). Competent and structured, but not at the level of a seasoned QA professional."
       },
       "communication": {
         "score": 2,
         "quotes": [
-          "So yeah, my experience is pretty honed in on Novodea right now",
+          "So yeah, my experience is pretty honed in on Novedia right now",
           "So yeah, I like to make sure that I keep my list next to me, my what's about me",
-          "you know, 10, 10, 10, so that whole entire 30 minute block"
+          "you know, 30 minutes of trial and error and control shift R and things like that"
         ],
-        "rationale": "Sam communicates conversationally and the substance is there, but the delivery is disorganized and hard to follow in places. Sentences trail off, the 30/10 explanation becomes confusing (the math doesn't add up clearly), and there are filler phrases throughout. The content is recoverable but requires effort from the listener. This is a 2 rather than a 3 because the disorganization meaningfully impedes clarity on a role where precise communication of issues is core."
+        "rationale": "The candidate communicates conversationally and informally, with frequent filler phrases ('you know,' 'so yeah,' 'things like that') and some incomplete thoughts ('my what's about me'). The substance is generally followable and the examples are coherent, but the delivery is disorganized and would benefit from clearer structure. The candidate does not clearly delineate answers to each question \u2014 they blend responses together. For a QA role where written communication (bug tickets, Slack messages) is critical, this level of verbal organization is a mild concern, though not a hard fail."
       },
       "instruction_following_and_professionalism": {
         "score": 3,
         "quotes": [
-          "first thing I like to do before editing a lesson",
-          "an example of how I did catch an error and how I handled it would be",
-          "the next question is kind of a perfect example of something that I could fix myself",
-          "I'm Sam Carver and I look forward to hearing from you guys"
+          "All right, hi everyone! I'm Sam Carver and this is for the QA Specialist position at Novidia.",
+          "So essentially jumping right in",
+          "I'm Sam Carver and I look forward to hearing from you guys."
         ],
-        "rationale": "Sam addressed all three questions, stayed on topic, and maintained a professional tone throughout. They explicitly signposted transitions between questions, which shows awareness of the structure. The submission is complete and delivered professionally. Minor deduction because the answer to question 3 (bug ticket write-up specifics) was thin \u2014 they described the decision process but didn't explain how they actually write up a ticket so someone else can act without follow-up questions."
+        "rationale": "The candidate addressed all three questions, though not always in a clearly delineated way \u2014 the third question's answer bled into the second. The submission is professional in tone and the candidate introduces and closes appropriately. No major professionalism issues. Instruction-following is adequate but not exemplary \u2014 a more structured response that explicitly addressed each question in turn would have scored higher."
       }
     },
-    "total_score": 14,
-    "recommendation": "Advance",
-    "recommendation_reason": "Total score 14 meets the threshold (>=14) and Role Fit 3 meets the gating criterion (>=3).",
+    "total_score": 13,
+    "recommendation": "Hold",
+    "recommendation_reason": "Total score 13 is borderline (11-13).",
     "hard_fail_flags": {
       "did_not_answer_all_questions": false,
       "lacks_core_experience": false,
       "cannot_communicate_clearly": false
     },
     "confidence_score": 0.78,
-    "overall_summary": "Sam Carver is a credible QA candidate with direct, platform-specific experience at Novodea. Their review process is structured and their error-catching instincts are genuine, as evidenced by a concrete and relevant example. The main weaknesses are communication clarity (rambling delivery, unclear math in the 30/10 explanation) and a thin answer on bug ticket documentation \u2014 the role requires precise written communication of issues, and that wasn't fully demonstrated. The unpaid intern context limits confidence in their ability to operate independently at scale, but the foundational QA skills are present. Overall a borderline advance \u2014 strong enough in substance to merit consideration, with communication as the primary risk factor.",
+    "overall_summary": "Sam Carver is an early-career QA candidate whose experience is entirely within Novidia as an unpaid intern. Despite the limited background, they demonstrate genuine platform-specific QA instincts \u2014 catching image-question mismatches, audio alignment errors, age-appropriateness issues, and platform bugs \u2014 and have developed a functional, self-structured review and troubleshooting methodology. The 30-10 time-boxing approach and documentation habits are positive signals. The main weaknesses are the narrow experience base (single company, intern-level), informal communication style, and lack of formal QA tooling or ticket-writing detail. The candidate is a developing QA practitioner with real potential but not yet at a senior or fully independent level. Confidence is moderately high given a reasonably detailed transcript, though the informal delivery introduces some ambiguity about the depth of their knowledge.",
     "system_notes": {
       "model_used": "claude-sonnet-4-6",
       "rubric_version": "scoring_rubric.md",

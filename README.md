@@ -11,7 +11,7 @@ If you're on a Windows machine and just want to grade interviews, you only need 
 3. **Place `.mp4` interview videos** in the `Interviews_To_Grade` folder on your Desktop. Files must be named like `firstname-lastname-SME.mp4` or `firstname-lastname-QA.mp4`.
 4. **Double-click `2_Run_Evaluations.bat`** — results appear in the `Results` folder on your Desktop.
 
-> **First run note:** The first evaluation downloads the `small` faster-whisper transcription model (~460 MB). The window may appear frozen while downloading and during transcription of large video files — this is normal.
+> **First run note:** The first evaluation downloads the faster-whisper transcription model. The window may appear frozen while downloading and during transcription of large video files — this is normal.
 
 ---
 
@@ -103,26 +103,89 @@ Per-candidate JSON files and a `batch_summary.csv` are written to the output dir
 ## Pipeline
 
 1. **Ingest** -- scans for `.mp4` files, validates filenames, checks duration
-2. **Transcribe** -- extracts audio via FFmpeg, transcribes with faster-whisper (`small` model)
+2. **Transcribe** -- extracts audio via FFmpeg, transcribes with faster-whisper (`base` model by default; override with `WHISPER_MODEL_SIZE` env var)
 3. **Analyze** -- scores transcript against rubric via Claude Sonnet 4.6 (`temperature=0`, calibrated decisiveness prompt)
-4. **Classify** -- applies decision rules (Advance / Hold / Decline)
+4. **Classify** -- applies decision rules (Strong Advance / Advance / Hold / Decline)
 5. **Output** -- writes JSON + CSV, moves processed files
 
-## Airtable Integration (read-only)
+## Airtable Integration
 
-The pipeline can ingest candidate videos directly from an Airtable base instead of a local directory. By default it is **read-only** — it fetches records and downloads attachments without writing anything back. Pass `--write-back` to also PATCH scores into Airtable after each evaluation.
+The pipeline integrates with Airtable in two modes: **button-triggered** (primary, for HR users) and **CLI-driven** (for developers and bulk runs).
 
-### How it works
+### Automation-triggered evaluation (HR flow)
 
-1. Polls the Candidate Submissions table for unscored "Video Submission" records (files attached, no score yet).
-2. Downloads the video attachment to a local temp directory.
-3. Fetches the linked scoring rubric from Airtable (or falls back to a local `scoring_rubric.md`).
-4. Runs the full pipeline: transcription, LLM scoring, classification.
-5. Writes results locally (JSON, HTML report, CSV) — nothing is written to Airtable.
+When a video file is attached to a Candidate Submissions record and all score fields are empty, an Airtable Automation automatically fires a POST request to a hosted FastAPI server. The server returns a 202 immediately and evaluates the candidate in the background. Scores and stage advancement appear in Airtable within a few minutes — no manual trigger required.
 
-### Setup
+#### Server deployment (Railway)
 
-Set an Airtable Personal Access Token with at minimum `data.records:read` and `schema.bases:read` scopes. Add `data.records:write` if you plan to use `--write-back`.
+The FastAPI server lives in `src/interview_eval/server.py` and is deployed to Railway. It exposes two endpoints:
+
+- `POST /evaluate` — accepts `{"record_id": "<id>"}` with `X-Webhook-Secret` header; returns 202 and queues evaluation as a background task
+- `GET /health` — uptime check
+
+**Environment variables required on Railway:**
+
+| Variable | Description |
+|:---|:---|
+| `AIRTABLE_TOKEN` | Airtable Personal Access Token (`data.records:write` scope) |
+| `ANTHROPIC_API_KEY` | Anthropic API key |
+| `WEBHOOK_SECRET` | Shared secret matched against `X-Webhook-Secret` header |
+| `WHISPER_MODEL_SIZE` | _(optional)_ Whisper model size — `base` (default, 74 MB) or `small` (483 MB) |
+| `RUBRIC_PATH` | _(optional)_ Path to `scoring_rubric.md` on the server (default: repo root) |
+| `OUTPUT_DIR` | _(optional)_ Directory for local JSON/HTML/CSV outputs (default: `/tmp/eval_output`) |
+
+**Deploy:**
+```bash
+railway up --service Airtable_integration
+```
+
+#### Airtable automation setup
+
+Create a new Automation on the **Candidate Submissions** table:
+
+- **Trigger:** When a record is updated — matches **all** of the following conditions:
+  - Files is not empty + contains a filenames contains 'mp4'.
+  - Recommendation is empty
+  - Score 1, Score 2, Score 3, Score 4, and Score 5 are all empty
+- **Action:** Run a script
+
+Paste this script and configure the two input variables:
+
+```javascript
+const { record_id} = input.config();
+const webhook_sec = input.secret('webhook_secret');
+
+  const response = await fetch(
+      "https://airtableintegration-production.up.railway.app/evaluate",
+      {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "X-Webhook-Secret": webhook_sec,
+          },
+          body: JSON.stringify({ record_id }),
+      }
+  );
+
+  if (response.status === 202) {
+      console.log(`Evaluation queued for ${record_id} — scores will appear in ~3 minutes.`);
+  } else {
+      const body = await response.text();
+      throw new Error(`Server returned ${response.status}: ${body}`);
+  }
+```
+
+Input variables in the Airtable automation editor:
+- `record_id` → **Triggering record's Record ID**
+- `webhook_secret` → your `WEBHOOK_SECRET` value (stored inside the automation, not visible to base users)
+
+---
+
+### CLI-driven pipeline
+
+Fetches unscored records from Airtable and processes them in bulk. Writes scores back by default; pass `--dry-run` to skip write-back.
+
+#### Setup
 
 ```bash
 export AIRTABLE_TOKEN=patXXXXXX...
@@ -135,13 +198,11 @@ $env:AIRTABLE_TOKEN = "patXXXXXX..."
 $env:ANTHROPIC_API_KEY = "sk-ant-..."
 ```
 
-### Running the pipeline
+#### Running the pipeline
 
 ```bash
 python scripts/simulate_airtable_pipeline.py
 ```
-
-Scores are written back to Airtable by default. Pass `--dry-run` to skip the write-back (useful for testing; a read-only token is then sufficient).
 
 | Flag | Default | Description |
 |:---|:---|:---|
@@ -152,42 +213,23 @@ Scores are written back to Airtable by default. Pass `--dry-run` to skip the wri
 | `--dry-run` | off | Skip writing scores back to Airtable (read-only mode) |
 | `--save-transcripts` | off | Save raw transcript text to `tests/fixtures/transcripts/` after transcription |
 
-### Writing scores back to Airtable
+### Write-back behaviour
 
-After each successful evaluation the pipeline PATCHes results into the Candidate Submissions record. This requires `data.records:write` scope on the token. Use `--dry-run` to process records without writing anything back.
+After each successful evaluation the pipeline PATCHes results into the Candidate Submissions record and auto-advances the linked Application Stage:
 
-```bash
-python scripts/simulate_airtable_pipeline.py --limit 3
-python scripts/simulate_airtable_pipeline.py --limit 3 --dry-run  # read-only
-```
-
-On success the Candidate Submission record receives all five dimension scores, a Recommendation, and notes. The linked Application record's Stage is also advanced automatically:
-
-| AI recommendation | Application Stage |
-|:---|:---|
-| `Strong Advance` | First Interview |
-| `Advance` | First Interview |
-| `Hold` | Hold |
-| `Decline` | Discontinued |
-| `Needs Human Review` | *(unchanged — manual review required)* |
-
-Once Score 1 is written, that Submission record no longer matches the "unscored" filter and will not be re-fetched on future runs.
-
-#### Recommendation mapping
-
-The pipeline produces four internal labels. These are translated to Airtable's singleSelect options before writing:
-
-| Pipeline label | Airtable value | Notes |
+| AI recommendation | Airtable value | Application Stage |
 |:---|:---|:---|
-| `Strong Advance` | `Strong hire` | Total ≥ 17 AND Role Fit ≥ 3 |
-| `Advance` | `Hire` | Total 14–16 AND Role Fit ≥ 3 |
-| `Hold` | `Lean no` | |
-| `Decline` | `Strong no` | |
-| `Needs Human Review` | _(skipped)_ | No equivalent option exists; the Recommendation field is left blank |
+| `Strong Advance` | `Strong hire` | First Interview |
+| `Advance` | `Hire` | First Interview |
+| `Hold` | `Lean no` | Hold |
+| `Decline` | `Strong no` | Discontinued |
+| `Needs Human Review` | _(skipped)_ | *(unchanged)* |
 
-The mapping is defined in `_RECOMMENDATION_MAP` in `airtable_ingest.py`. The `Strong Advance` / `Advance` split threshold (17) is set in `classify.py`.
+The `Strong Advance` / `Advance` split threshold (total ≥ 17 AND Role Fit ≥ 3) is defined in `classify.py`. The recommendation-to-Airtable mapping is in `_RECOMMENDATION_MAP` in `airtable_ingest.py`.
 
 > **Note:** Transcription and scoring failures are never written back. Those records keep `Score 1` blank so they are retried on the next run.
+
+---
 
 ## Scoring Calibration
 
@@ -201,8 +243,6 @@ The LLM scoring prompt and rubric were calibrated against a set of real QA Speci
 - *Substance-over-form*: conversational or rambling delivery is not penalised — the substance of what the candidate describes is what matters.
 
 **Scoring rubric (`scoring_rubric.md`)** — each criterion's 1–4 anchor cells were expanded from a single generic sentence to 2–3 behavioral signals per level, with separate QA Behavioral Signals and SME Behavioral Signals columns. The Process and Instruction-Following criteria include worked examples. Role Fit anchors distinguish classroom-teacher-only backgrounds from candidates who have navigated CTE funding or compliance processes. The Communication anchor includes guidance on narrative Q1 storytelling vs. repetitive thin answers.
-
-**Transcription model (`config.py`)** — upgraded from `base` to `small` for better fidelity on conversational speech.
 
 **Temperature** — set to `0` in all API calls for deterministic, reproducible scoring.
 
@@ -234,12 +274,14 @@ python scripts/compare_prompts.py
 | Module | Responsibility |
 |:---|:---|
 | `ingest.py` | File scanning, filename validation, directory management |
-| `airtable_ingest.py` | Airtable API polling, video download, rubric fetching, score write-back |
+| `airtable_ingest.py` | Airtable API polling, video download, rubric fetching, score write-back, stage advancement |
+| `airtable_pipeline.py` | Shared pipeline orchestration used by both the CLI script and the FastAPI server |
+| `server.py` | FastAPI webhook server — accepts button-triggered evaluation requests from Airtable |
 | `transcribe.py` | FFmpeg audio extraction + faster-whisper transcription |
 | `analyze.py` | Claude API rubric scoring with structured output |
-| `classify.py` | Pure decision logic (advance/hold/decline/hard-fail) |
+| `classify.py` | Pure decision logic (Strong Advance / Advance / Hold / Decline / hard-fail) |
 | `output.py` | Per-candidate JSON + batch CSV generation |
-| `pipeline.py` | Orchestrates the full flow with per-candidate error isolation |
+| `pipeline.py` | Orchestrates the full local file flow with per-candidate error isolation |
 | `cli.py` | CLI entry point (argparse) |
 | `models.py` | All Pydantic data models |
 | `config.py` | Configuration constants and environment loading |
@@ -248,7 +290,7 @@ python scripts/compare_prompts.py
 
 | Script | Responsibility |
 |:---|:---|
-| `simulate_airtable_pipeline.py` | End-to-end Airtable pipeline runner (read-only by default, `--write-back` to PATCH scores) |
+| `simulate_airtable_pipeline.py` | CLI runner for bulk Airtable evaluation (writes back by default; `--dry-run` to skip) |
 | `compare_prompts.py` | Prompt calibration harness — scores saved transcript fixtures, reports MAE and direction accuracy vs. HR ground truth |
 
 ## Tests
