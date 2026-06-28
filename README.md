@@ -144,7 +144,7 @@ railway up --service Airtable_integration
 Create a new Automation on the **Candidate Submissions** table:
 
 - **Trigger:** When a record is updated — matches **all** of the following conditions:
-  - Files (filenames) is not empty / contains a file
+  - Files is not empty + contains a filenames contains 'mp4'.
   - Recommendation is empty
   - Score 1, Score 2, Score 3, Score 4, and Score 5 are all empty
 - **Action:** Run a script
@@ -152,26 +152,27 @@ Create a new Automation on the **Candidate Submissions** table:
 Paste this script and configure the two input variables:
 
 ```javascript
-const { record_id, webhook_secret } = input.config();
+const { record_id} = input.config();
+const webhook_sec = input.secret('webhook_secret');
 
-const response = await fetch(
-    "https://airtableintegration-production.up.railway.app/evaluate",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Webhook-Secret": webhook_secret,
-        },
-        body: JSON.stringify({ record_id }),
-    }
-);
+  const response = await fetch(
+      "https://airtableintegration-production.up.railway.app/evaluate",
+      {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "X-Webhook-Secret": webhook_sec,
+          },
+          body: JSON.stringify({ record_id }),
+      }
+  );
 
-if (response.status === 202) {
-    console.log(`Evaluation queued for ${record_id} — scores will appear in ~3 minutes.`);
-} else {
-    const body = await response.text();
-    throw new Error(`Server returned ${response.status}: ${body}`);
-}
+  if (response.status === 202) {
+      console.log(`Evaluation queued for ${record_id} — scores will appear in ~3 minutes.`);
+  } else {
+      const body = await response.text();
+      throw new Error(`Server returned ${response.status}: ${body}`);
+  }
 ```
 
 Input variables in the Airtable automation editor:
