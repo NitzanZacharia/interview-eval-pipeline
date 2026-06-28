@@ -31,6 +31,7 @@ import os
 import tempfile
 from pathlib import Path
 
+import static_ffmpeg
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, Header, HTTPException
 from pydantic import BaseModel
@@ -39,6 +40,7 @@ from .airtable_ingest import fetch_single_record
 from .airtable_pipeline import process_record
 
 load_dotenv()
+static_ffmpeg.add_paths()  # adds static ffmpeg binary to PATH before any transcription runs
 
 app = FastAPI(title="Interview Eval Pipeline")
 
