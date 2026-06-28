@@ -112,9 +112,9 @@ Per-candidate JSON files and a `batch_summary.csv` are written to the output dir
 
 The pipeline integrates with Airtable in two modes: **button-triggered** (primary, for HR users) and **CLI-driven** (for developers and bulk runs).
 
-### Button-triggered evaluation (HR flow)
+### Automation-triggered evaluation (HR flow)
 
-HR clicks a **"Score Video"** button directly on a Candidate Submissions row in Airtable. An Automation fires a POST request to a hosted FastAPI server, which returns a 202 immediately and evaluates the candidate in the background. Scores and stage advancement appear in Airtable within a few minutes.
+When a video file is attached to a Candidate Submissions record and all score fields are empty, an Airtable Automation automatically fires a POST request to a hosted FastAPI server. The server returns a 202 immediately and evaluates the candidate in the background. Scores and stage advancement appear in Airtable within a few minutes — no manual trigger required.
 
 #### Server deployment (Railway)
 
@@ -141,11 +141,15 @@ railway up --service Airtable_integration
 
 #### Airtable automation setup
 
-1. In the **Candidate Submissions** table, add a **Button** field named `Score Video`
-2. Create a new Automation:
-   - Trigger: **When button is clicked**
-   - Action: **Run a script**
-3. Paste this script and configure the two input variables:
+Create a new Automation on the **Candidate Submissions** table:
+
+- **Trigger:** When a record is updated — matches **all** of the following conditions:
+  - Files (filenames) is not empty / contains a file
+  - Recommendation is empty
+  - Score 1, Score 2, Score 3, Score 4, and Score 5 are all empty
+- **Action:** Run a script
+
+Paste this script and configure the two input variables:
 
 ```javascript
 const { record_id, webhook_secret } = input.config();
