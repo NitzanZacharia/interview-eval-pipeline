@@ -298,7 +298,16 @@ python scripts/compare_prompts.py
 ```bash
 pytest
 ```
+## Limitations and Assumptions
 
+* **File Format:** The pipeline strictly requires video files to be in `.mp4` format. 
+* **Naming Convention:** A rigid naming convention is enforced. Interview files must be named `firstname-lastname-JOBTYPE.mp4` (e.g., `john-doe-SME.mp4` or `jane-smith-QA.mp4`). Any files that fail to match this regex pattern will not be processed and are automatically moved to a sibling `bad_name_conv/` directory.
+* **File Locking (CSV):** The `batch_summary.csv` file must be closed before running the pipeline. If the file is left open in another application (like Microsoft Excel), the script will experience a `PermissionError` because it cannot append new rows to a locked file. 
+* **Audio Only:** The evaluation is entirely based on the extracted audio track. Visual cues, presentation materials, or candidate body language are completely ignored by the LLM during scoring.
+* **Audio Quality Dependency:** The reliability of the final score is tied to the transcription quality. Poor audio recordings may result in inaccurate transcripts, which directly affects the LLM's ability to evaluate the candidate. 
+* **Language Support:** The transcription model and evaluation rubric are designed exclusively for English-language interviews.
+* **Single Speaker Assumption:** The transcription engine processes the audio as a single, continuous stream. This means interviewer prompts or interruptions are included in the transcript text and may occasionally be interpreted as the candidate's speech.
+* **Throughput and Duration Constraints:** The system is built and tested for a maximum volume of roughly 10 videos per day, with an expected individual video length between 2 and 10 minutes. Videos falling outside this duration range will trigger processing warnings.
 ## License
 
 MIT
