@@ -4,7 +4,7 @@ import sys
 
 
 CLAUDE_MODEL = "claude-sonnet-4-6"
-WHISPER_MODEL_SIZE = os.environ.get("WHISPER_MODEL_SIZE", "small")
+WHISPER_MODEL_SIZE = os.environ.get("WHISPER_MODEL_SIZE", "base")
 
 MIN_DURATION_SECONDS = 120  # 2 minutes
 MAX_DURATION_SECONDS = 600  # 10 minutes
