@@ -183,65 +183,66 @@ function classifySender(senderEmail, plainBody) {
 }
 
 /**
+ * Private helper: extract a bare email address from a single "From:" line value.
+ * Tries angle-bracket format first ("Full Name <email>"), then bare @ pattern.
+ * Returns a lowercased email string or null.
+ */
+function _extractEmailFromLine(fromLine) {
+  if (!fromLine) return null;
+  var angleMatch = fromLine.match(/<([^>]+)>/);
+  if (angleMatch) return angleMatch[1].trim().toLowerCase();
+  var bareMatch = fromLine.match(/([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+)/);
+  if (bareMatch) return bareMatch[1].trim().toLowerCase();
+  return null;
+}
+
+/**
  * Extract the original candidate's email address from a forwarded message body.
+ *
+ * Scans ALL forward blocks in the body (handles nested chains of any depth —
+ * e.g. team member A forwards team member B's forward of the candidate's reply).
+ * Returns the first non-@novodia.co email found across all blocks.
  *
  * Handles three common forward formats:
  *   1. Gmail:      "---------- Forwarded message ---------\nFrom: ..."
  *   2. Apple Mail: "Begin forwarded message:\nFrom: ..."
  *   3. Bare quote: "On [date], Name <email> wrote:"
  *
- * Returns the candidate email string (lowercased), or null if:
- *   - No recognisable forwarded block is found, OR
- *   - The extracted email ends in @novodia.co (internal chain, not a candidate).
+ * Returns the candidate email (lowercased) or null if none found.
  */
 function extractCandidateEmailFromForward(plainBody) {
   if (!plainBody) return null;
 
-  var fromLine = null;
+  var fromLines = [];
+  var match;
 
-  // Pattern 1: Gmail-style forward header
-  var gmailMatch = plainBody.match(/------+\s*Forwarded message\s*------+[\s\S]*?From:\s*([^\n]+)/i);
-  if (gmailMatch) {
-    fromLine = gmailMatch[1];
+  // Pattern 1: Gmail forward — collect ALL occurrences via global exec loop.
+  var gmailRe = /------+\s*Forwarded message\s*------+[\s\S]*?From:\s*([^\n]+)/gi;
+  while ((match = gmailRe.exec(plainBody)) !== null) {
+    fromLines.push(match[1]);
   }
 
-  // Pattern 2: Apple Mail / Outlook-style forward
-  if (!fromLine) {
-    var appleMatch = plainBody.match(/Begin forwarded message:[\s\S]*?From:\s*([^\n]+)/i);
-    if (appleMatch) {
-      fromLine = appleMatch[1];
+  // Pattern 2: Apple Mail / Outlook forward — collect ALL occurrences.
+  var appleRe = /Begin forwarded message:[\s\S]*?From:\s*([^\n]+)/gi;
+  while ((match = appleRe.exec(plainBody)) !== null) {
+    fromLines.push(match[1]);
+  }
+
+  // Pattern 3: Bare inline quote "On [date], Name <email> wrote:" — collect ALL.
+  var bareRe = /On\s+[^\n]+?,\s+([^\n]+?)\s+wrote:/gi;
+  while ((match = bareRe.exec(plainBody)) !== null) {
+    fromLines.push(match[1]);
+  }
+
+  // Return the first email that is not a @novodia.co team member address.
+  for (var i = 0; i < fromLines.length; i++) {
+    var email = _extractEmailFromLine(fromLines[i]);
+    if (email && !email.endsWith(TEAM_DOMAIN)) {
+      return email;
     }
   }
 
-  // Pattern 3: Bare inline quote — "On [date], Name <email> wrote:"
-  // Captures everything between the last date comma and "wrote:".
-  if (!fromLine) {
-    var bareMatch = plainBody.match(/On\s+[^\n]+?,\s+([^\n]+?)\s+wrote:/i);
-    if (bareMatch) {
-      fromLine = bareMatch[1];
-    }
-  }
-
-  if (!fromLine) return null;
-
-  // Extract the email address from the From line.
-  var candidateEmail = null;
-  var angleMatch = fromLine.match(/<([^>]+)>/);
-  if (angleMatch) {
-    candidateEmail = angleMatch[1].trim().toLowerCase();
-  } else {
-    var bareEmailMatch = fromLine.match(/([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+)/);
-    if (bareEmailMatch) {
-      candidateEmail = bareEmailMatch[1].trim().toLowerCase();
-    }
-  }
-
-  if (!candidateEmail) return null;
-
-  // Reject @novodia.co addresses — forwarded internal chain, not a candidate.
-  if (candidateEmail.endsWith(TEAM_DOMAIN)) return null;
-
-  return candidateEmail;
+  return null;
 }
 
 
