@@ -76,6 +76,13 @@ HR_GROUND_TRUTH: dict[str, dict] = {
         "hr_total": 17,
         "hr_recommendation": "Hire",
     },
+    "sam-carver-QA": {
+        "label": "Sam Carver",
+        "job_type": "QA",
+        "hr_scores": (3, 3, 4, 3, 4),
+        "hr_total": 17,
+        "hr_recommendation": "Hire",
+    },
 }
 
 # AI scores produced by the old prompt (pre-revision baseline).
@@ -87,6 +94,7 @@ BASELINE_AI_SCORES: dict[str, dict] = {
     "emily-kobelenzdirienzo-QA":   {"scores": (2, 2, 2, 3, 4), "total": 13, "recommendation": "Hold"},
     "natalie-emery-SME":           {"scores": (2, 2, 3, 3, 4), "total": 14, "recommendation": "Hold"},
     "cynthia-taylor-SME":          {"scores": (4, 3, 3, 3, 4), "total": 17, "recommendation": "Advance"},
+    "sam-carver-QA":               {"scores": (2, 3, 3, 2, 3), "total": 13, "recommendation": "Hold"},
 }
 
 RUBRIC_PATH = _ROOT / "scoring_rubric.md"
