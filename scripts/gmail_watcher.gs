@@ -36,8 +36,10 @@ var AIRTABLE_API_BASE = "https://api.airtable.com/v0";
 // Railway ingest endpoint that starts the scoring pipeline.
 var RAILWAY_INGEST_URL = "https://airtableintegration-production.up.railway.app/ingest";
 
-// Gmail subject of the reply we are looking for.
-var REPLY_SUBJECT = "Re: Next step in your NovoDia application: short video submission";
+// Base subject of the video-request email (without Re:/Fwd: prefix).
+// Gmail's subject: search matches this phrase anywhere in the subject line,
+// so it catches both "Re: ..." direct replies and "Fwd: ..." teammate forwards.
+var REPLY_SUBJECT = "Next step in your NovoDia application: short video submission";
 
 // Google Drive folder where MP4 attachments are uploaded.
 var DRIVE_FOLDER_ID = "1GzhsnpTYcGZsiKoDx9ID0UwOkF4ZSrES";
