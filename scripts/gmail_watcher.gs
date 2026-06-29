@@ -485,7 +485,7 @@ function flagForReview(recordId, replyText, senderEmail, token) {
   GmailApp.sendEmail(
     HR_NOTIFICATION_EMAIL,
     "Video Submission: Candidate replied without a video",
-    "Sender: " + senderEmail + "\n\nReply text:\n" + (replyText || "").substring(0, 1000)
+    "Sender: " + senderEmail + "\n\nReply text:\n" + (replyText || "")
   );
 }
 
