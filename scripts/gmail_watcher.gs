@@ -45,6 +45,10 @@ var DRIVE_FOLDER_ID = "1GzhsnpTYcGZsiKoDx9ID0UwOkF4ZSrES";
 // Where to send "candidate replied without a video" notifications.
 var HR_NOTIFICATION_EMAIL = "lily.nir@novodia.co";
 
+// Email domain used by NovoDia team members. Emails from this domain are
+// treated as potential forwards, not direct candidate replies.
+var TEAM_DOMAIN = "@novodia.co";
+
 
 // ---------------------------------------------------------------------------
 // MAIN — runs every 5 minutes
@@ -91,46 +95,153 @@ function checkVideoReplies() {
 
 /**
  * Handle a single candidate reply message end-to-end.
+ * Handles two sender types:
+ *   - Direct candidate replies (sender is not @novodia.co)
+ *   - Forwarded candidate replies (sender is @novodia.co; original sender extracted from body)
+ * Internal team chatter (no valid candidate payload) is silently skipped.
  */
 function processMessage(msg, airtableToken, webhookSecret) {
-  // --- Identify the sender ----------------------------------------------------
+  // --- Classify sender: direct reply vs. forward vs. internal chatter --------
   var senderEmail = parseEmail(msg.getFrom());
-  console.log("Processing reply from: " + senderEmail);
+  var plainBody = msg.getPlainBody() || "";
+
+  var senderInfo = classifySender(senderEmail, plainBody);
+  if (!senderInfo) {
+    // Internal team chatter — no candidate payload found; skip quietly.
+    console.log("Skipping internal chatter / unrecognised forward from: " + senderEmail);
+    msg.markRead();
+    return;
+  }
+
+  var candidateEmail = senderInfo.candidateEmail;
+  var isForward = senderInfo.isForward;
+  console.log("Processing " + (isForward ? "forwarded" : "direct") + " reply. Candidate: " + candidateEmail);
 
   // --- Find the Airtable Submission record to attach this video to ------------
-  var recordId = findSubmissionRecord(senderEmail, airtableToken);
+  var recordId = findSubmissionRecord(candidateEmail, airtableToken);
   if (!recordId) {
-    console.log("No matching unscored Submission found for " + senderEmail + ". Marking read and skipping.");
+    console.log("No matching unscored Submission found for " + candidateEmail + ". Marking read and skipping.");
     msg.markRead();
     return;
   }
   console.log("Matched Submission record: " + recordId);
 
   // --- Detect the video source ------------------------------------------------
+  // GmailApp.getAttachments() returns forwarded attachments at the message level,
+  // so findVideoAttachment() works identically for direct replies and forwards.
   var attachments = msg.getAttachments();
   var videoAttachment = findVideoAttachment(attachments);
-  var body = msg.getPlainBody() || "";
-  var youtubeUrl = findYouTubeUrl(body);
+  var youtubeUrl = findYouTubeUrl(plainBody);
 
   if (videoAttachment) {
-    // Path A: MP4 attachment -> upload to Drive, then trigger ingest.
+    // Path A: MP4 attachment → upload to Drive, then trigger ingest.
     console.log("Found video attachment: " + videoAttachment.getName());
-    var downloadUrl = uploadToDrive(videoAttachment, senderEmail);
+    var downloadUrl = uploadToDrive(videoAttachment, candidateEmail);
     triggerIngest(recordId, "gdrive", downloadUrl, videoAttachment.getName(), webhookSecret);
 
   } else if (youtubeUrl) {
-    // Path A: YouTube link -> trigger ingest directly with the URL.
+    // Path A: YouTube link → trigger ingest directly with the URL.
     console.log("Found YouTube URL: " + youtubeUrl);
     triggerIngest(recordId, "youtube", youtubeUrl, null, webhookSecret);
 
   } else {
-    // Path B: no video -> flag for human review and notify HR.
+    // Path B: no video → flag for human review and notify HR.
     console.log("No video found in reply. Flagging for review.");
-    flagForReview(recordId, body, senderEmail, airtableToken);
+    flagForReview(recordId, plainBody, candidateEmail, airtableToken);
   }
 
   // --- Done: mark handled so we do not reprocess it next run ------------------
   msg.markRead();
+}
+
+
+// ---------------------------------------------------------------------------
+// SENDER CLASSIFICATION — direct reply vs. forwarded vs. internal chatter
+// ---------------------------------------------------------------------------
+
+/**
+ * Determine whether the email is a direct candidate reply, a valid forwarded
+ * candidate reply, or internal team chatter.
+ *
+ * Returns {candidateEmail, isForward} for processable emails,
+ * or null for internal chatter that should be skipped.
+ */
+function classifySender(senderEmail, plainBody) {
+  if (!senderEmail.endsWith(TEAM_DOMAIN)) {
+    // Direct reply from a candidate (sender is not @novodia.co).
+    return { candidateEmail: senderEmail, isForward: false };
+  }
+
+  // Sender is a team member — look for a forwarded candidate payload.
+  var forwardedEmail = extractCandidateEmailFromForward(plainBody);
+  if (forwardedEmail) {
+    return { candidateEmail: forwardedEmail, isForward: true };
+  }
+
+  // No valid candidate payload found — this is internal chatter.
+  return null;
+}
+
+/**
+ * Extract the original candidate's email address from a forwarded message body.
+ *
+ * Handles three common forward formats:
+ *   1. Gmail:      "---------- Forwarded message ---------\nFrom: ..."
+ *   2. Apple Mail: "Begin forwarded message:\nFrom: ..."
+ *   3. Bare quote: "On [date], Name <email> wrote:"
+ *
+ * Returns the candidate email string (lowercased), or null if:
+ *   - No recognisable forwarded block is found, OR
+ *   - The extracted email ends in @novodia.co (internal chain, not a candidate).
+ */
+function extractCandidateEmailFromForward(plainBody) {
+  if (!plainBody) return null;
+
+  var fromLine = null;
+
+  // Pattern 1: Gmail-style forward header
+  var gmailMatch = plainBody.match(/------+\s*Forwarded message\s*------+[\s\S]*?From:\s*([^\n]+)/i);
+  if (gmailMatch) {
+    fromLine = gmailMatch[1];
+  }
+
+  // Pattern 2: Apple Mail / Outlook-style forward
+  if (!fromLine) {
+    var appleMatch = plainBody.match(/Begin forwarded message:[\s\S]*?From:\s*([^\n]+)/i);
+    if (appleMatch) {
+      fromLine = appleMatch[1];
+    }
+  }
+
+  // Pattern 3: Bare inline quote — "On [date], Name <email> wrote:"
+  // Captures everything between the last date comma and "wrote:".
+  if (!fromLine) {
+    var bareMatch = plainBody.match(/On\s+[^\n]+?,\s+([^\n]+?)\s+wrote:/i);
+    if (bareMatch) {
+      fromLine = bareMatch[1];
+    }
+  }
+
+  if (!fromLine) return null;
+
+  // Extract the email address from the From line.
+  var candidateEmail = null;
+  var angleMatch = fromLine.match(/<([^>]+)>/);
+  if (angleMatch) {
+    candidateEmail = angleMatch[1].trim().toLowerCase();
+  } else {
+    var bareEmailMatch = fromLine.match(/([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+)/);
+    if (bareEmailMatch) {
+      candidateEmail = bareEmailMatch[1].trim().toLowerCase();
+    }
+  }
+
+  if (!candidateEmail) return null;
+
+  // Reject @novodia.co addresses — forwarded internal chain, not a candidate.
+  if (candidateEmail.endsWith(TEAM_DOMAIN)) return null;
+
+  return candidateEmail;
 }
 
 
