@@ -15,6 +15,7 @@ from .airtable_ingest import (
     _STAGE_MAP,
     advance_application_stage,
     airtable_record_to_candidate_file,
+    build_candidate_file_from_path,
     fetch_rubric_text,
     write_scores_to_airtable,
 )
@@ -36,6 +37,7 @@ def process_record(
     output_dir: Path,
     write_back: bool = True,
     save_transcripts: bool = False,
+    video_path: Path | None = None,
 ) -> dict | None:
     """
     Run the full pipeline for one Airtable Candidate Submission record.
@@ -51,13 +53,24 @@ def process_record(
     print(f"  Label  : {label}")
 
     # ── Step 1: Download video + build CandidateFile ──────────────────────
-    print("  [1/5] Downloading video from Airtable...")
-    outcome = airtable_record_to_candidate_file(record, download_dir)
-    if outcome is None:
-        print("        SKIPPED — could not build CandidateFile (check attachment field).")
-        return None
-    candidate, at_record_id = outcome
-    print(f"        Downloaded → {candidate.path.name}")
+    if video_path is not None:
+        # Email ingest path: video was already downloaded externally (from Drive or YouTube).
+        print(f"  [1/5] Using pre-downloaded video: {video_path.name}")
+        candidate = build_candidate_file_from_path(record, video_path)
+        if candidate is None:
+            print("        SKIPPED — could not parse candidate metadata from record.")
+            return None
+        at_record_id = record["id"]
+    else:
+        # Standard Airtable path: download from the record's Files attachment.
+        print("  [1/5] Downloading video from Airtable...")
+        outcome = airtable_record_to_candidate_file(record, download_dir)
+        if outcome is None:
+            print("        SKIPPED — could not build CandidateFile (check attachment field).")
+            return None
+        candidate, at_record_id = outcome
+
+    print(f"        Video     : {candidate.path.name}")
     if candidate.duration_seconds is not None:
         print(f"        Duration  : {candidate.duration_seconds:.1f}s")
     for w in candidate.warnings:

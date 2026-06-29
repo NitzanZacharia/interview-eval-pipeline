@@ -492,3 +492,47 @@ def advance_application_stage(
     for app_id in application_record_ids:
         url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{APPLICATIONS_TABLE}/{app_id}"
         _patch(url, {"fields": {F_STAGE: stage}}, api_key)
+
+
+def build_candidate_file_from_path(record: dict, video_path: Path) -> Optional[CandidateFile]:
+    """
+    Build a CandidateFile from a pre-downloaded video path and the Airtable
+    record metadata, skipping the Airtable attachment download step.
+
+    Used by the email ingest path (/ingest endpoint) where the video has already
+    been downloaded from Google Drive or YouTube before this function is called.
+    """
+    fields = record.get("fields", {})
+
+    candidate_names: list = fields.get(F_CANDIDATE_NAME, [])
+    if not candidate_names:
+        submission_label = fields.get(F_SUBMISSION_NAME, "")
+        if submission_label:
+            candidate_names = [submission_label]
+
+    first_name, last_name = _parse_name(candidate_names)
+    job_type = _derive_job_type(candidate_names)
+
+    warnings: list[str] = []
+    duration = get_video_duration(video_path)
+    if duration is None:
+        warnings.append(f"Could not determine duration for {video_path.name}.")
+    elif duration < config.MIN_DURATION_SECONDS:
+        warnings.append(
+            f"Video duration {duration:.1f}s is below the minimum of "
+            f"{config.MIN_DURATION_SECONDS}s."
+        )
+    elif duration > config.MAX_DURATION_SECONDS:
+        warnings.append(
+            f"Video duration {duration:.1f}s is above the maximum of "
+            f"{config.MAX_DURATION_SECONDS}s."
+        )
+
+    return CandidateFile(
+        path=video_path,
+        first_name=first_name,
+        last_name=last_name,
+        job_type=job_type,
+        duration_seconds=duration,
+        warnings=warnings,
+    )
