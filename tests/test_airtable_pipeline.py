@@ -33,7 +33,7 @@ def _make_record(rubric_ids: list | None = None) -> dict:
     return {"id": "recTEST123", "fields": fields}
 
 
-def _stub_pipeline(monkeypatch) -> mock.Mock:
+def _stub_pipeline(monkeypatch, job_type: str = "QA") -> mock.Mock:
     """
     Stub everything downstream of the rubric step so tests run instantly.
     Returns the mock for fetch_rubric_text so callers can assert on it.
@@ -42,6 +42,7 @@ def _stub_pipeline(monkeypatch) -> mock.Mock:
     fake_candidate.path = Path("/tmp/fake.mp4")
     fake_candidate.duration_seconds = 120.0
     fake_candidate.warnings = []
+    fake_candidate.job_type = job_type
 
     monkeypatch.setattr(
         "interview_eval.airtable_pipeline.build_candidate_file_from_path",
@@ -182,6 +183,107 @@ class TestRubricPriority:
         )
 
         fetch_rubric_mock.assert_called_once_with(["recRUBRIC1"], "fake_key")
+
+    def test_role_specific_rubric_used_for_qa_candidate(self, tmp_path, monkeypatch):
+        """scoring_rubric_QA.md must be chosen over scoring_rubric.md for QA candidates."""
+        _stub_pipeline(monkeypatch)
+
+        base_rubric = tmp_path / "scoring_rubric.md"
+        base_rubric.write_text("# Combined rubric", encoding="utf-8")
+        qa_rubric = tmp_path / "scoring_rubric_QA.md"
+        qa_rubric.write_text("# QA-only rubric", encoding="utf-8")
+
+        captured = {}
+
+        def capture_score(transcript_text, rubric_text, job_type):
+            captured["rubric"] = rubric_text
+            return mock.Mock()
+
+        monkeypatch.setattr("interview_eval.airtable_pipeline.score_transcript", capture_score)
+
+        record = _make_record()  # QA candidate (default candidate_names contains "QA")
+        video = tmp_path / "fake.mp4"
+        video.write_bytes(b"fake")
+
+        process_record(
+            record=record,
+            airtable_key="fake_key",
+            download_dir=tmp_path,
+            fallback_rubric_path=base_rubric,
+            output_dir=tmp_path,
+            write_back=False,
+            video_path=video,
+        )
+
+        assert captured["rubric"] == "# QA-only rubric"
+
+    def test_base_rubric_used_when_role_specific_absent(self, tmp_path, monkeypatch):
+        """Fall back to scoring_rubric.md when no role-specific file exists."""
+        _stub_pipeline(monkeypatch)
+
+        base_rubric = tmp_path / "scoring_rubric.md"
+        base_rubric.write_text("# Combined rubric", encoding="utf-8")
+        # No scoring_rubric_QA.md created
+
+        captured = {}
+
+        def capture_score(transcript_text, rubric_text, job_type):
+            captured["rubric"] = rubric_text
+            return mock.Mock()
+
+        monkeypatch.setattr("interview_eval.airtable_pipeline.score_transcript", capture_score)
+
+        record = _make_record()
+        video = tmp_path / "fake.mp4"
+        video.write_bytes(b"fake")
+
+        process_record(
+            record=record,
+            airtable_key="fake_key",
+            download_dir=tmp_path,
+            fallback_rubric_path=base_rubric,
+            output_dir=tmp_path,
+            write_back=False,
+            video_path=video,
+        )
+
+        assert captured["rubric"] == "# Combined rubric"
+
+    def test_role_specific_rubric_not_used_for_wrong_job_type(self, tmp_path, monkeypatch):
+        """scoring_rubric_QA.md must NOT be used when scoring an SME candidate."""
+        _stub_pipeline(monkeypatch, job_type="SME")
+
+        base_rubric = tmp_path / "scoring_rubric.md"
+        base_rubric.write_text("# Combined rubric", encoding="utf-8")
+        qa_rubric = tmp_path / "scoring_rubric_QA.md"
+        qa_rubric.write_text("# QA-only rubric", encoding="utf-8")
+        # No scoring_rubric_SME.md created
+
+        captured = {}
+
+        def capture_score(transcript_text, rubric_text, job_type):
+            captured["rubric"] = rubric_text
+            return mock.Mock()
+
+        monkeypatch.setattr("interview_eval.airtable_pipeline.score_transcript", capture_score)
+
+        # SME candidate
+        sme_record = _make_record()
+        sme_record["fields"][F_CANDIDATE_NAME] = ["John Smith - Math SME"]
+        video = tmp_path / "fake.mp4"
+        video.write_bytes(b"fake")
+
+        process_record(
+            record=sme_record,
+            airtable_key="fake_key",
+            download_dir=tmp_path,
+            fallback_rubric_path=base_rubric,
+            output_dir=tmp_path,
+            write_back=False,
+            video_path=video,
+        )
+
+        assert captured["rubric"] == "# Combined rubric"
 
     def test_returns_none_when_no_rubric_available(self, tmp_path, monkeypatch):
         """No local file and no Airtable link → process_record returns None."""

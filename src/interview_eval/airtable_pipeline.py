@@ -77,11 +77,19 @@ def process_record(
         print(f"        WARNING   : {w}")
 
     # ── Step 2: Fetch rubric ───────────────────────────────────────────────
-    # Local scoring_rubric.md is the source of truth (kept in version control
-    # and contains the calibrated anchor text). Airtable is a last-resort
-    # fallback for environments where the file is unavailable.
+    # Priority: role-specific file (scoring_rubric_QA.md / scoring_rubric_SME.md)
+    # → combined base file (scoring_rubric.md) → Airtable record (last resort).
+    # Role-specific files are derived from the base path so callers don't need
+    # to change — server.py and simulate_airtable_pipeline.py pass the same path.
     print("  [2/5] Fetching rubric...")
-    if fallback_rubric_path.is_file():
+    role_rubric = (
+        fallback_rubric_path.parent
+        / f"{fallback_rubric_path.stem}_{candidate.job_type}.md"
+    )
+    if role_rubric.is_file():
+        rubric_text = role_rubric.read_text(encoding="utf-8")
+        print(f"        Rubric loaded from local file: {role_rubric.name}")
+    elif fallback_rubric_path.is_file():
         rubric_text = fallback_rubric_path.read_text(encoding="utf-8")
         print(f"        Rubric loaded from local file: {fallback_rubric_path.name}")
     else:
@@ -91,7 +99,7 @@ def process_record(
             print(f"        Local rubric not found — fetched from Airtable (record {rubric_ids[0]}).")
         else:
             print(
-                f"        ERROR: Local rubric not found at {fallback_rubric_path} and no "
+                f"        ERROR: No rubric available at {fallback_rubric_path} and no "
                 "Airtable rubric linked.\n"
                 "        Set RUBRIC_PATH env var or place scoring_rubric.md in the repo root."
             )
