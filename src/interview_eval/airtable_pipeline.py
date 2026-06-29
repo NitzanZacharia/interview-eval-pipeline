@@ -12,11 +12,13 @@ from pathlib import Path
 from .airtable_ingest import (
     F_APPLICATION,
     F_RUBRIC_LINK,
+    _REVIEW_RECOMMENDATIONS,
     _STAGE_MAP,
     advance_application_stage,
     airtable_record_to_candidate_file,
     build_candidate_file_from_path,
     fetch_rubric_text,
+    send_hr_review_notification,
     write_scores_to_airtable,
 )
 from .analyze import score_transcript
@@ -164,6 +166,10 @@ def process_record(
                 f"  WARNING: Airtable write failed for {at_record_id}: {exc}\n"
                 "  Scores saved locally — retry the record to write back."
             )
+
+        if result_obj.recommendation in _REVIEW_RECOMMENDATIONS:
+            candidate_name = f"{result_obj.first_name.title()} {result_obj.last_name.title()}"
+            send_hr_review_notification(candidate_name, result_obj.recommendation, at_record_id)
 
     return result_obj.model_dump()
 
