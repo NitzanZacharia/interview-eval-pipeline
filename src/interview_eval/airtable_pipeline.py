@@ -77,20 +77,25 @@ def process_record(
         print(f"        WARNING   : {w}")
 
     # ── Step 2: Fetch rubric ───────────────────────────────────────────────
+    # Local scoring_rubric.md is the source of truth (kept in version control
+    # and contains the calibrated anchor text). Airtable is a last-resort
+    # fallback for environments where the file is unavailable.
     print("  [2/5] Fetching rubric...")
-    rubric_ids: list[str] = record.get("fields", {}).get(F_RUBRIC_LINK, [])
-    if rubric_ids:
-        rubric_text = fetch_rubric_text(rubric_ids, airtable_key)
-        print(f"        Rubric fetched from Airtable (record {rubric_ids[0]}).")
-    elif fallback_rubric_path.is_file():
+    if fallback_rubric_path.is_file():
         rubric_text = fallback_rubric_path.read_text(encoding="utf-8")
-        print(f"        No rubric linked — using local fallback: {fallback_rubric_path}")
+        print(f"        Rubric loaded from local file: {fallback_rubric_path.name}")
     else:
-        print(
-            f"        ERROR: No rubric linked and fallback not found at {fallback_rubric_path}.\n"
-            "        Set RUBRIC_PATH env var or link a Rubric record in Airtable."
-        )
-        return None
+        rubric_ids: list[str] = record.get("fields", {}).get(F_RUBRIC_LINK, [])
+        if rubric_ids:
+            rubric_text = fetch_rubric_text(rubric_ids, airtable_key)
+            print(f"        Local rubric not found — fetched from Airtable (record {rubric_ids[0]}).")
+        else:
+            print(
+                f"        ERROR: Local rubric not found at {fallback_rubric_path} and no "
+                "Airtable rubric linked.\n"
+                "        Set RUBRIC_PATH env var or place scoring_rubric.md in the repo root."
+            )
+            return None
 
     # ── Step 3: Transcribe ─────────────────────────────────────────────────
     print("  [3/5] Transcribing video (this may take a while on first run)...")
