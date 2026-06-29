@@ -494,6 +494,17 @@ def advance_application_stage(
         _patch(url, {"fields": {F_STAGE: stage}}, api_key)
 
 
+def write_video_url_to_airtable(record_id: str, url: str, filename: str, api_key: str) -> None:
+    """
+    PATCH the Files (multipleAttachments) field with a video URL so the
+    submission video appears in Airtable.  Called AFTER scores are written so
+    the Airtable automation (Files not empty + scores empty → /evaluate) never
+    re-fires.  Only call when the field is currently empty.
+    """
+    endpoint = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{SUBMISSIONS_TABLE}/{record_id}"
+    _patch(endpoint, {"fields": {F_FILES: [{"url": url, "filename": filename}]}}, api_key)
+
+
 def build_candidate_file_from_path(record: dict, video_path: Path) -> Optional[CandidateFile]:
     """
     Build a CandidateFile from a pre-downloaded video path and the Airtable
