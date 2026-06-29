@@ -70,6 +70,9 @@ function checkVideoReplies() {
     return;
   }
 
+  // Notify HR of any candidates the pipeline has flagged for human review.
+  checkScoredReviews(airtableToken);
+
   // Find candidate reply threads from the last 7 days that we have not read yet.
   var query = 'subject:"' + REPLY_SUBJECT + '" is:unread newer_than:7d';
   var threads = GmailApp.search(query);
@@ -90,6 +93,62 @@ function checkVideoReplies() {
       processMessage(msg, airtableToken, webhookSecret);
     } catch (err) {
       console.log("ERROR processing thread " + t + ": " + err);
+    }
+  }
+}
+
+/**
+ * Query for Submission records that the scoring pipeline has flagged with
+ * "Review Needed" = true AND have a score (i.e. they were fully scored, not
+ * just flagged on Path B). For each match, email HR, then clear the flag so
+ * the notification is not sent again next run.
+ */
+function checkScoredReviews(token) {
+  var formula = 'AND({Review Needed}=1,{Score 1}!="")';
+  var url = AIRTABLE_API_BASE + "/" + AIRTABLE_BASE_ID + "/" + SUBMISSIONS_TABLE_ID +
+    "?filterByFormula=" + encodeURIComponent(formula) +
+    "&fields[]=Name" +
+    "&fields[]=Recommendation" +
+    "&pageSize=50";
+
+  var json = airtableGet(url, token);
+  if (!json || !json.records || json.records.length === 0) return;
+
+  console.log("Found " + json.records.length + " scored record(s) flagged for HR review.");
+
+  for (var i = 0; i < json.records.length; i++) {
+    var rec = json.records[i];
+    var recordId = rec.id;
+    var name = (rec.fields && rec.fields["Name"]) || recordId;
+    var recommendation = (rec.fields && rec.fields["Recommendation"]) || "Unknown";
+    var recordUrl = "https://airtable.com/" + AIRTABLE_BASE_ID + "/" + SUBMISSIONS_TABLE_ID + "/" + recordId;
+
+    try {
+      GmailApp.sendEmail(
+        HR_NOTIFICATION_EMAIL,
+        "Candidate review needed: " + name + " (" + recommendation + ")",
+        "The AI pipeline has scored a candidate but a human decision is required.\n\n" +
+        "Candidate    : " + name + "\n" +
+        "AI decision  : " + recommendation + "\n\n" +
+        "Please watch the video submission and make a final call:\n" + recordUrl + "\n"
+      );
+      console.log("HR notification sent for: " + name);
+    } catch (err) {
+      console.log("ERROR sending HR notification for " + recordId + ": " + err);
+    }
+
+    // Clear the flag so this record is not notified again.
+    try {
+      var patchUrl = AIRTABLE_API_BASE + "/" + AIRTABLE_BASE_ID + "/" + SUBMISSIONS_TABLE_ID + "/" + recordId;
+      UrlFetchApp.fetch(patchUrl, {
+        method: "patch",
+        contentType: "application/json",
+        headers: { "Authorization": "Bearer " + token },
+        payload: JSON.stringify({ fields: { "Review Needed": false } }),
+        muteHttpExceptions: true,
+      });
+    } catch (err) {
+      console.log("ERROR clearing Review Needed flag for " + recordId + ": " + err);
     }
   }
 }

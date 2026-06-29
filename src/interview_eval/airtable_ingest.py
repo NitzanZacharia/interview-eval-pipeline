@@ -495,54 +495,14 @@ def advance_application_stage(
         _patch(url, {"fields": {F_STAGE: stage}}, api_key)
 
 
-HR_NOTIFICATION_EMAIL = os.environ.get("HR_NOTIFICATION_EMAIL", "lily.nir@novodia.co")
-
 # Recommendations that require a human to review before a final hiring decision.
 _REVIEW_RECOMMENDATIONS = {"Hold", "Needs Human Review"}
 
 
-def send_hr_review_notification(
-    candidate_name: str,
-    recommendation: str,
-    submission_record_id: str,
-) -> None:
-    """
-    Email HR when a candidate is placed on Hold or flagged for human review.
-    Requires SMTP_USER and SMTP_PASSWORD env vars (Gmail app password).
-    Fails silently with a warning if credentials are missing.
-    """
-    import smtplib
-    from email.mime.text import MIMEText
-
-    smtp_user = os.environ.get("SMTP_USER", "")
-    smtp_password = os.environ.get("SMTP_PASSWORD", "")
-    if not smtp_user or not smtp_password:
-        print("  [notify] SMTP_USER or SMTP_PASSWORD not configured — skipping HR notification.")
-        return
-
-    record_url = (
-        f"https://airtable.com/{AIRTABLE_BASE_ID}/{SUBMISSIONS_TABLE}/{submission_record_id}"
-    )
-    subject = f"Candidate review needed: {candidate_name} ({recommendation})"
-    body = (
-        f"The AI pipeline has flagged a candidate for human review.\n\n"
-        f"Candidate : {candidate_name}\n"
-        f"Decision  : {recommendation}\n\n"
-        f"Please watch the video submission and make a final call:\n{record_url}\n"
-    )
-
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = smtp_user
-    msg["To"] = HR_NOTIFICATION_EMAIL
-
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(smtp_user, smtp_password)
-            server.send_message(msg)
-        print(f"  [notify] HR notification sent to {HR_NOTIFICATION_EMAIL}.")
-    except Exception as exc:
-        print(f"  [notify] WARNING: HR notification failed: {exc}")
+def flag_review_needed(record_id: str, api_key: str) -> None:
+    """Set Review Needed = true on a Submission record so the GAS watcher picks it up."""
+    url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{SUBMISSIONS_TABLE}/{record_id}"
+    _patch(url, {"fields": {"Review Needed": True}}, api_key)
 
 
 def write_video_url_to_airtable(record_id: str, url: str, filename: str, api_key: str) -> None:

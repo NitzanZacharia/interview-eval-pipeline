@@ -18,7 +18,7 @@ from .airtable_ingest import (
     airtable_record_to_candidate_file,
     build_candidate_file_from_path,
     fetch_rubric_text,
-    send_hr_review_notification,
+    flag_review_needed,
     write_scores_to_airtable,
 )
 from .analyze import score_transcript
@@ -168,8 +168,11 @@ def process_record(
             )
 
         if result_obj.recommendation in _REVIEW_RECOMMENDATIONS:
-            candidate_name = f"{result_obj.first_name.title()} {result_obj.last_name.title()}"
-            send_hr_review_notification(candidate_name, result_obj.recommendation, at_record_id)
+            try:
+                flag_review_needed(at_record_id, airtable_key)
+                print(f"  Review Needed flag set — GAS will notify HR on next poll.")
+            except Exception as exc:
+                print(f"  WARNING: Could not set Review Needed flag: {exc}")
 
     return result_obj.model_dump()
 
