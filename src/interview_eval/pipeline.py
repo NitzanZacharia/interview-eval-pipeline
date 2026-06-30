@@ -98,7 +98,7 @@ def run_pipeline(
                 continue
 
             classification = classify_candidate(analysis)
-            print(f"  [{candidate.candidate_id}] → {classification.recommendation}")
+            print(f"  [{candidate.candidate_id}] -> {classification.recommendation}")
 
             result = CandidateResult.from_pipeline(
                 candidate, transcript, analysis, classification
