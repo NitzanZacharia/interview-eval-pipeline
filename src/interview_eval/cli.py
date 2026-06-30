@@ -29,8 +29,12 @@ def main() -> None:
     parser.add_argument(
         "--rubric",
         type=Path,
-        default=Path("./scoring_rubric.md"),
-        help="Path to scoring rubric file (default: ./scoring_rubric.md)",
+        default=None,
+        help=(
+            "Path to a scoring rubric file. If omitted, scoring_rubric_QA.md or "
+            "scoring_rubric_SME.md is selected automatically per candidate, falling "
+            "back to scoring_rubric.md."
+        ),
     )
 
     args = parser.parse_args()
@@ -39,10 +43,13 @@ def main() -> None:
         print(f"Error: input directory does not exist: {args.input_dir}", file=sys.stderr)
         sys.exit(1)
 
-    if not args.rubric.is_file():
-        print(f"Error: rubric file does not exist: {args.rubric}", file=sys.stderr)
+    explicit_rubric = args.rubric is not None
+    rubric_path = args.rubric if explicit_rubric else Path("./scoring_rubric.md")
+
+    if explicit_rubric and not rubric_path.is_file():
+        print(f"Error: rubric file does not exist: {rubric_path}", file=sys.stderr)
         sys.exit(1)
 
     config.get_api_key()
 
-    run_pipeline(args.input_dir, args.output_dir, args.rubric)
+    run_pipeline(args.input_dir, args.output_dir, rubric_path, explicit_rubric=explicit_rubric)
