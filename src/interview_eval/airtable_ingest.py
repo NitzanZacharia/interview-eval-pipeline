@@ -553,7 +553,7 @@ def upload_html_report_to_airtable(record_id: str, html_path: Path, api_key: str
     """
     url = (
         f"{AIRTABLE_CONTENT_BASE}/{AIRTABLE_BASE_ID}"
-        f"/{SUBMISSIONS_TABLE}/{record_id}/{F_MODEL_OUTPUT}/uploadAttachment"
+        f"/{record_id}/{F_MODEL_OUTPUT}/uploadAttachment"
     )
     with html_path.open("rb") as fh:
         resp = requests.post(
