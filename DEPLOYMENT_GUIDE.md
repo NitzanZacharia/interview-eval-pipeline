@@ -234,8 +234,17 @@ var REPLY_SUBJECT = "Next step in your NovoDia application: short video submissi
 
 ### 2.5 Create the time-driven trigger
 
+- [ ] Before running the trigger, decide on the **polling interval** for production. The current default is every 5 minutes (`everyMinutes(5)` in `createTimeTrigger()`). In production you may want a longer interval (e.g. 15 or 30 minutes) to reduce Gmail API quota usage. Edit `gmail_watcher.gs` before proceeding:
+
+  ```javascript
+  // In createTimeTrigger(), change the interval as needed:
+  .everyMinutes(5)    // current default — change to 15, 30, etc.
+  ```
+
+  Note: Apps Script only supports these minute values: 1, 5, 10, 15, 30. For hourly or longer, use `.everyHours(N)` instead.
+
 - [ ] In the Apps Script editor, run `createTimeTrigger()` **once manually**
-- [ ] Verify in **Triggers** (clock icon in the left panel) that `checkVideoReplies` appears with a 5-minute interval
+- [ ] Verify in **Triggers** (clock icon in the left panel) that `checkVideoReplies` appears with the expected interval
 - [ ] Do NOT run `createTimeTrigger()` again — it creates a duplicate trigger each time
 
 ### 2.6 Verify the watcher is working
