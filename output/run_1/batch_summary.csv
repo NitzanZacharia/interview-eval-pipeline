@@ -1,4 +1,0 @@
-candidate_id,first_name,last_name,job_type,total_score,role_fit,domain_judgment,process,communication,instruction_following,recommendation,confidence,hard_fail,evaluation_timestamp
-cynthia-taylor-SME,cynthia,taylor,SME,16,4,3,3,3,3,Advance,0.82,false,2026-06-30T11:18:44Z
-emily-kobelenz-QA,emily,kobelenz,QA,12,2,2,2,3,3,Hold,0.82,false,2026-06-30T11:19:57Z
-leslie-duceay-QA,leslie,duceay,QA,11,2,2,2,2,3,Hold,0.82,false,2026-06-30T11:21:31Z
