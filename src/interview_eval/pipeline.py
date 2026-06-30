@@ -14,8 +14,33 @@ from .output import write_batch_csv, write_candidate_json, write_candidate_repor
 from .transcribe import transcribe_video
 
 
-def run_pipeline(input_dir: Path, output_dir: Path, rubric_path: Path) -> None:
-    rubric_text = rubric_path.read_text(encoding="utf-8")
+def _resolve_rubric_text(base_path: Path, job_type: str, explicit: bool) -> str | None:
+    """Return rubric text for this candidate.
+
+    When --rubric was explicitly passed, use that file for every candidate.
+    Otherwise mirror the airtable_pipeline.py waterfall:
+      1. scoring_rubric_{job_type}.md  (role-specific)
+      2. base_path (scoring_rubric.md)
+    Returns None if no rubric file can be found.
+    """
+    if explicit:
+        return base_path.read_text(encoding="utf-8")
+    role_specific = base_path.parent / f"{base_path.stem}_{job_type}.md"
+    if role_specific.is_file():
+        print(f"  Rubric: {role_specific.name}")
+        return role_specific.read_text(encoding="utf-8")
+    if base_path.is_file():
+        print(f"  Rubric: {base_path.name}")
+        return base_path.read_text(encoding="utf-8")
+    return None
+
+
+def run_pipeline(
+    input_dir: Path,
+    output_dir: Path,
+    rubric_path: Path,
+    explicit_rubric: bool = False,
+) -> None:
     candidates = scan_input_dir(input_dir)
 
     if not candidates:
@@ -29,6 +54,14 @@ def run_pipeline(input_dir: Path, output_dir: Path, rubric_path: Path) -> None:
     for candidate in candidates:
         print(f"  [{candidate.candidate_id}] Transcribing...")
         try:
+            rubric_text = _resolve_rubric_text(rubric_path, candidate.job_type, explicit_rubric)
+            if rubric_text is None:
+                print(
+                    f"  [{candidate.candidate_id}] ERROR: No rubric file found for "
+                    f"job_type={candidate.job_type} at {rubric_path}. Skipping."
+                )
+                continue
+
             transcript = transcribe_video(candidate.path)
 
             if transcript.failed:
