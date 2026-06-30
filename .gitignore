@@ -7,3 +7,4 @@ bin/
 sim_output/
 simulation_output.json
 HR_real_scoring/
+output/
