@@ -163,13 +163,60 @@ Add input variables:
 - `record_id` → Triggering record's Record ID
 - `webhook_secret` → store as a **secret** (not a plain input) — use the production `WEBHOOK_SECRET` value
 
-### 1.7 Generate a new Airtable Personal Access Token
+### 1.7 Verify the Applications → Stage field includes required options
+
+The pipeline and the two offer-flow automations below use specific Stage values. Confirm all of the following exist in **Applications → Stage** (singleSelect):
+
+| Stage value | Used by |
+|:---|:---|
+| `Awaiting Video` | Manual / HR workflow |
+| `Video to Score` | Manual / HR workflow |
+| `TBD` | Pipeline write-back (Hold) |
+| `First Interview` | Pipeline write-back (Advance / Strong Advance) |
+| `Offer + Paperwork` | Triggers Automation 2 (consulting agreement email) |
+| `Consulting Agreement` | Triggers Automation 3 (onboarding email) |
+| `Hired` | Manual / HR workflow |
+| `Withdrew` | Manual / HR workflow |
+| `Discontinued` | Pipeline write-back (Decline) |
+
+### 1.8 Set up Automation 2 — "Offer + Paperwork" email (Consulting Agreement information)
+
+In the production base, create a new Automation on the **Applications** table:
+
+- **Trigger:** When a record matches conditions *(fires when a record first meets the conditions, not for records already matching)*
+  - Table: `Applications`
+  - Condition: Stage **is** `Offer + Paperwork`
+- **Action:** Send email
+  - **From:** HR email address (the account that owns the base / a connected Gmail)
+  - **To:** Candidate's email (look up via the linked Candidates record)
+  - **Subject:** `NovoDia Consulting Agreement – Information Needed`
+  - **Body:** *(copy the email body from the sandbox automation — open it in the sandbox base at `https://airtable.com/app2HZvbePXlH9xLX/wflcZdEW57xiQO6aR` to copy the exact content)*
+
+> **Sandbox reference:** `https://airtable.com/app2HZvbePXlH9xLX/wflcZdEW57xiQO6aR`
+
+### 1.9 Set up Automation 3 — "Consulting Agreement" email (Onboarding details)
+
+In the production base, create a new Automation on the **Applications** table:
+
+- **Trigger:** When a record matches conditions *(fires when a record first meets the conditions, not for records already matching)*
+  - Table: `Applications`
+  - Condition: Stage **is** `Consulting Agreement`
+- **Action:** Send email
+  - **From:** HR email address
+  - **To:** Candidate's email (look up via the linked Candidates record)
+  - **Subject:** `NovoDia Consulting Agreement – Onboarding Details`
+  - **Body:** *(copy the email body from the sandbox automation — open it in the sandbox base at `https://airtable.com/app2HZvbePXlH9xLX/wfld1FMlJgrKSUz1X` to copy the exact content)*
+
+> **Sandbox reference:** `https://airtable.com/app2HZvbePXlH9xLX/wfld1FMlJgrKSUz1X`
+
+### 1.10 Generate a new Airtable Personal Access Token
 
 - [ ] In Airtable: account icon → **Developer Hub** → **Personal access tokens** → **Create token**
 - [ ] Name it (e.g., `interview-eval-prod`)
 - [ ] Scopes: `data.records:read`, `data.records:write`, `schema.bases:read`
 - [ ] Scope to: production base only
 - [ ] Copy and store the token — it is shown only once
+
 
 ---
 
