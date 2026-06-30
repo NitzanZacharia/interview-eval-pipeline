@@ -12,10 +12,15 @@ from pathlib import Path
 from .airtable_ingest import (
     F_APPLICATION,
     F_RUBRIC_LINK,
+    _REVIEW_RECOMMENDATIONS,
     _STAGE_MAP,
     advance_application_stage,
     airtable_record_to_candidate_file,
+    build_candidate_file_from_path,
+    discontinue_candidate_record,
     fetch_rubric_text,
+    flag_review_needed,
+    upload_html_report_to_airtable,
     write_scores_to_airtable,
 )
 from .analyze import score_transcript
@@ -36,6 +41,7 @@ def process_record(
     output_dir: Path,
     write_back: bool = True,
     save_transcripts: bool = False,
+    video_path: Path | None = None,
 ) -> dict | None:
     """
     Run the full pipeline for one Airtable Candidate Submission record.
@@ -51,33 +57,57 @@ def process_record(
     print(f"  Label  : {label}")
 
     # ── Step 1: Download video + build CandidateFile ──────────────────────
-    print("  [1/5] Downloading video from Airtable...")
-    outcome = airtable_record_to_candidate_file(record, download_dir)
-    if outcome is None:
-        print("        SKIPPED — could not build CandidateFile (check attachment field).")
-        return None
-    candidate, at_record_id = outcome
-    print(f"        Downloaded → {candidate.path.name}")
+    if video_path is not None:
+        # Email ingest path: video was already downloaded externally (from Drive or YouTube).
+        print(f"  [1/5] Using pre-downloaded video: {video_path.name}")
+        candidate = build_candidate_file_from_path(record, video_path)
+        if candidate is None:
+            print("        SKIPPED — could not parse candidate metadata from record.")
+            return None
+        at_record_id = record["id"]
+    else:
+        # Standard Airtable path: download from the record's Files attachment.
+        print("  [1/5] Downloading video from Airtable...")
+        outcome = airtable_record_to_candidate_file(record, download_dir)
+        if outcome is None:
+            print("        SKIPPED — could not build CandidateFile (check attachment field).")
+            return None
+        candidate, at_record_id = outcome
+
+    print(f"        Video     : {candidate.path.name}")
     if candidate.duration_seconds is not None:
         print(f"        Duration  : {candidate.duration_seconds:.1f}s")
     for w in candidate.warnings:
         print(f"        WARNING   : {w}")
 
     # ── Step 2: Fetch rubric ───────────────────────────────────────────────
+    # Priority: role-specific file (scoring_rubric_QA.md / scoring_rubric_SME.md)
+    # → combined base file (scoring_rubric.md) → Airtable record (last resort).
+    # Role-specific files are derived from the base path so callers don't need
+    # to change — server.py and simulate_airtable_pipeline.py pass the same path.
     print("  [2/5] Fetching rubric...")
-    rubric_ids: list[str] = record.get("fields", {}).get(F_RUBRIC_LINK, [])
-    if rubric_ids:
-        rubric_text = fetch_rubric_text(rubric_ids, airtable_key)
-        print(f"        Rubric fetched from Airtable (record {rubric_ids[0]}).")
+    role_rubric = (
+        fallback_rubric_path.parent
+        / f"{fallback_rubric_path.stem}_{candidate.job_type}.md"
+    )
+    if role_rubric.is_file():
+        rubric_text = role_rubric.read_text(encoding="utf-8")
+        print(f"        Rubric loaded from local file: {role_rubric.name}")
     elif fallback_rubric_path.is_file():
         rubric_text = fallback_rubric_path.read_text(encoding="utf-8")
-        print(f"        No rubric linked — using local fallback: {fallback_rubric_path}")
+        print(f"        Rubric loaded from local file: {fallback_rubric_path.name}")
     else:
-        print(
-            f"        ERROR: No rubric linked and fallback not found at {fallback_rubric_path}.\n"
-            "        Set RUBRIC_PATH env var or link a Rubric record in Airtable."
-        )
-        return None
+        rubric_ids: list[str] = record.get("fields", {}).get(F_RUBRIC_LINK, [])
+        if rubric_ids:
+            rubric_text = fetch_rubric_text(rubric_ids, airtable_key)
+            print(f"        Local rubric not found — fetched from Airtable (record {rubric_ids[0]}).")
+        else:
+            print(
+                f"        ERROR: No rubric available at {fallback_rubric_path} and no "
+                "Airtable rubric linked.\n"
+                "        Set RUBRIC_PATH env var or place scoring_rubric.md in the repo root."
+            )
+            return None
 
     # ── Step 3: Transcribe ─────────────────────────────────────────────────
     print("  [3/5] Transcribing video (this may take a while on first run)...")
@@ -90,7 +120,7 @@ def process_record(
         )
         result_obj = CandidateResult.from_pipeline(candidate, transcript, None, classification)
         _print_result(result_obj, at_record_id)
-        _write_local_outputs(result_obj, output_dir)
+        report_path = _write_local_outputs(result_obj, output_dir)
         return result_obj.model_dump()
 
     print(f"        Transcript : {transcript.word_count} words")
@@ -112,7 +142,7 @@ def process_record(
         )
         result_obj = CandidateResult.from_pipeline(candidate, transcript, None, classification)
         _print_result(result_obj, at_record_id)
-        _write_local_outputs(result_obj, output_dir)
+        report_path = _write_local_outputs(result_obj, output_dir)
         return result_obj.model_dump()
 
     # ── Step 5: Classify ───────────────────────────────────────────────────
@@ -121,23 +151,41 @@ def process_record(
     result_obj = CandidateResult.from_pipeline(candidate, transcript, analysis, classification)
 
     _print_result(result_obj, at_record_id)
-    _write_local_outputs(result_obj, output_dir)
+    report_path = _write_local_outputs(result_obj, output_dir)
 
     if write_back:
         try:
             write_scores_to_airtable(result_obj, at_record_id, airtable_key)
             print(f"  Scores written to Airtable record {at_record_id}.")
+            try:
+                upload_html_report_to_airtable(at_record_id, report_path, airtable_key)
+                print("  HTML report uploaded to Airtable (Model output).")
+            except Exception as upload_exc:
+                print(f"  WARNING: Could not upload HTML report to Airtable: {upload_exc}")
             app_ids: list[str] = record.get("fields", {}).get(F_APPLICATION, [])
             if app_ids:
                 advance_application_stage(app_ids, result_obj.recommendation, airtable_key)
                 new_stage = _STAGE_MAP.get(result_obj.recommendation)
                 if new_stage:
                     print(f"  Stage updated    → {new_stage}")
+                if result_obj.recommendation == "Decline":
+                    try:
+                        discontinue_candidate_record(app_ids, airtable_key)
+                        print("  Candidate Recommendations → Discontinue")
+                    except Exception as disc_exc:
+                        print(f"  WARNING: Could not update Candidate Recommendations: {disc_exc}")
         except Exception as exc:
             print(
                 f"  WARNING: Airtable write failed for {at_record_id}: {exc}\n"
                 "  Scores saved locally — retry the record to write back."
             )
+
+        if result_obj.recommendation in _REVIEW_RECOMMENDATIONS:
+            try:
+                flag_review_needed(at_record_id, airtable_key)
+                print(f"  Review Needed flag set — GAS will notify HR on next poll.")
+            except Exception as exc:
+                print(f"  WARNING: Could not set Review Needed flag: {exc}")
 
     return result_obj.model_dump()
 
@@ -167,9 +215,10 @@ def _print_result(result: CandidateResult, at_record_id: str) -> None:
     print("  └──────────────────────────────────────────────────────────────")
 
 
-def _write_local_outputs(result: CandidateResult, output_dir: Path) -> None:
+def _write_local_outputs(result: CandidateResult, output_dir: Path) -> Path:
     json_path   = write_candidate_json(result, output_dir)
     report_path = write_candidate_report(result, output_dir)
     write_batch_csv([result], output_dir)
     print(f"  Local JSON   → {json_path}")
     print(f"  Local report → {report_path}")
+    return report_path

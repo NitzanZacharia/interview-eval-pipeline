@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import os
 import tempfile
+import threading
 from pathlib import Path
 
 import static_ffmpeg
@@ -36,7 +37,7 @@ from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, Header, HTTPException
 from pydantic import BaseModel
 
-from .airtable_ingest import fetch_single_record
+from .airtable_ingest import fetch_single_record, write_video_url_to_airtable
 from .airtable_pipeline import process_record
 
 load_dotenv()
@@ -46,6 +47,12 @@ app = FastAPI(title="Interview Eval Pipeline")
 
 # Default rubric: scoring_rubric.md in the project root (two levels above src/interview_eval/)
 _DEFAULT_RUBRIC = Path(__file__).resolve().parent.parent.parent / "scoring_rubric.md"
+
+# In-process deduplication: prevents two concurrent background tasks from
+# evaluating the same record simultaneously (e.g. Airtable automation + GAS
+# email watcher firing at the same time).
+_processing_records: set[str] = set()
+_processing_lock = threading.Lock()
 
 
 # ---------------------------------------------------------------------------
@@ -57,6 +64,18 @@ class EvaluateRequest(BaseModel):
 
 
 class EvaluateResponse(BaseModel):
+    status: str
+    record_id: str
+
+
+class IngestRequest(BaseModel):
+    record_id: str
+    source_type: str           # "gdrive" | "youtube"
+    source_url: str            # public Google Drive URL or YouTube video URL
+    filename: str | None = None
+
+
+class IngestResponse(BaseModel):
     status: str
     record_id: str
 
@@ -85,6 +104,28 @@ async def evaluate(
     return EvaluateResponse(status="accepted", record_id=req.record_id)
 
 
+@app.post("/ingest", status_code=202, response_model=IngestResponse)
+async def ingest(
+    req: IngestRequest,
+    background_tasks: BackgroundTasks,
+    x_webhook_secret: str = Header(default=None),
+) -> IngestResponse:
+    """
+    Accept a video source (Google Drive URL or YouTube link) from the GAS email
+    watcher and queue the download + evaluation pipeline.
+
+    Called by gmail_watcher.gs when a candidate replies to the video-request
+    email with an MP4 attachment (uploaded to Drive) or a YouTube link.
+    Returns 202 immediately; the pipeline runs in the background.
+    """
+    expected = os.environ.get("WEBHOOK_SECRET", "")
+    if not expected or x_webhook_secret != expected:
+        raise HTTPException(status_code=401, detail="Invalid or missing X-Webhook-Secret header.")
+
+    background_tasks.add_task(_run_ingest, req.record_id, req.source_type, req.source_url, req.filename)
+    return IngestResponse(status="accepted", record_id=req.record_id)
+
+
 @app.get("/health")
 def health() -> dict:
     """Uptime check used by Railway and load balancers."""
@@ -96,24 +137,116 @@ def health() -> dict:
 # ---------------------------------------------------------------------------
 
 def _run_pipeline(record_id: str) -> None:
-    airtable_key = os.environ.get("AIRTABLE_TOKEN", "")
-    rubric_path  = Path(os.environ.get("RUBRIC_PATH", str(_DEFAULT_RUBRIC)))
-    output_dir   = Path(os.environ.get("OUTPUT_DIR", "/tmp/eval_output"))
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    print(f"[server] Starting evaluation for record {record_id}")
+    with _processing_lock:
+        if record_id in _processing_records:
+            print(f"[server] Record {record_id} already being evaluated — skipping duplicate.")
+            return
+        _processing_records.add(record_id)
     try:
-        record = fetch_single_record(record_id, airtable_key)
-        with tempfile.TemporaryDirectory(prefix="eval_") as tmp:
-            process_record(
-                record=record,
-                airtable_key=airtable_key,
-                download_dir=Path(tmp),
-                fallback_rubric_path=rubric_path,
-                output_dir=output_dir,
-                write_back=True,
-                save_transcripts=False,
-            )
-        print(f"[server] Evaluation complete for record {record_id}")
-    except Exception as exc:
-        print(f"[server] ERROR evaluating record {record_id}: {exc}")
+        airtable_key = os.environ.get("AIRTABLE_TOKEN", "")
+        rubric_path  = Path(os.environ.get("RUBRIC_PATH", str(_DEFAULT_RUBRIC)))
+        output_dir   = Path(os.environ.get("OUTPUT_DIR", "/tmp/eval_output"))
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        print(f"[server] Starting evaluation for record {record_id}")
+        try:
+            record = fetch_single_record(record_id, airtable_key)
+            with tempfile.TemporaryDirectory(prefix="eval_") as tmp:
+                process_record(
+                    record=record,
+                    airtable_key=airtable_key,
+                    download_dir=Path(tmp),
+                    fallback_rubric_path=rubric_path,
+                    output_dir=output_dir,
+                    write_back=True,
+                    save_transcripts=False,
+                )
+            print(f"[server] Evaluation complete for record {record_id}")
+        except Exception as exc:
+            print(f"[server] ERROR evaluating record {record_id}: {exc}")
+    finally:
+        with _processing_lock:
+            _processing_records.discard(record_id)
+
+
+def _run_ingest(record_id: str, source_type: str, source_url: str, filename: str | None) -> None:
+    """Download video from Drive or YouTube and run the evaluation pipeline."""
+    with _processing_lock:
+        if record_id in _processing_records:
+            print(f"[server] Record {record_id} already being evaluated — skipping duplicate.")
+            return
+        _processing_records.add(record_id)
+    try:
+        import yt_dlp
+
+        airtable_key = os.environ.get("AIRTABLE_TOKEN", "")
+        rubric_path  = Path(os.environ.get("RUBRIC_PATH", str(_DEFAULT_RUBRIC)))
+        output_dir   = Path(os.environ.get("OUTPUT_DIR", "/tmp/eval_output"))
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        print(f"[server] Ingest from email: record={record_id} source={source_type}")
+        try:
+            record = fetch_single_record(record_id, airtable_key)
+
+            # Guard: skip if this record was already scored (prevents stale duplicate runs).
+            if record.get("fields", {}).get("fldPHxOA56TRIsEXq"):
+                print(f"[server] Record {record_id} already scored — skipping ingest.")
+                return
+
+            files_empty = not record.get("fields", {}).get("fldqc8EyRmXqogYTm")
+
+            with tempfile.TemporaryDirectory(prefix="ingest_") as tmp:
+                tmp_path = Path(tmp)
+                fname = filename or "video.mp4"
+
+                if source_type == "youtube":
+                    out_file = tmp_path / fname
+                    ydl_opts = {
+                        "outtmpl": str(out_file.with_suffix("")),
+                        "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
+                        "merge_output_format": "mp4",
+                        "quiet": True,
+                    }
+                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download([source_url])
+                    mp4_files = list(tmp_path.glob("*.mp4"))
+                    if not mp4_files:
+                        raise FileNotFoundError("yt-dlp produced no mp4 file.")
+                    video_path = mp4_files[0]
+                else:
+                    # Google Drive direct download or other public URL
+                    import requests as req_lib
+                    video_path = tmp_path / fname
+                    resp = req_lib.get(source_url, stream=True, timeout=300)
+                    resp.raise_for_status()
+                    with video_path.open("wb") as f:
+                        for chunk in resp.iter_content(chunk_size=1 << 20):
+                            f.write(chunk)
+
+                process_record(
+                    record=record,
+                    airtable_key=airtable_key,
+                    download_dir=tmp_path,
+                    fallback_rubric_path=rubric_path,
+                    output_dir=output_dir,
+                    write_back=True,
+                    save_transcripts=False,
+                    video_path=video_path,
+                )
+
+            # Write video URL to Airtable Files field so the attachment is visible
+            # in the record. Done AFTER scoring so the Airtable automation
+            # (Files not empty + scores empty → /evaluate) does not re-fire.
+            if source_type == "gdrive" and files_empty:
+                try:
+                    write_video_url_to_airtable(record_id, source_url, fname, airtable_key)
+                    print(f"[server] Video URL written to Files field for record {record_id}")
+                except Exception as exc:
+                    print(f"[server] WARNING: Could not write video URL to Files field: {exc}")
+
+            print(f"[server] Ingest complete for record {record_id}")
+        except Exception as exc:
+            print(f"[server] ERROR during ingest for record {record_id}: {exc}")
+    finally:
+        with _processing_lock:
+            _processing_records.discard(record_id)

@@ -13,6 +13,8 @@ Environment variable: AIRTABLE_TOKEN
 """
 from __future__ import annotations
 
+import base64
+import os
 import re
 import time
 from pathlib import Path
@@ -48,6 +50,7 @@ F_SCORE_4         = "flddiNitZN15QQlkS"   # number
 F_SCORE_5         = "fldR7xFsNNmyJp45d"   # number
 F_RECOMMENDATION  = "fldKC0LCVpzpv1Z1P"   # singleSelect
 F_NOTES           = "fldYtJUdvm7R2e6KN"   # multilineText
+F_MODEL_OUTPUT    = "fldd9rSej4iiNFlwe"   # multipleAttachments — HTML evaluation report
 # F_WEIGHTED_SCORE = "fldWy8zzT16FIt2Pz"  — formula field, auto-calculated; do not write
 
 # Airtable singleSelect names differ from pipeline labels — map at write time.
@@ -71,10 +74,17 @@ F_STAGE            = "fldLdOo2ZFgu8iaV5"   # singleSelect in Applications
 _STAGE_MAP: dict[str, str | None] = {
     "Strong Advance":     "First Interview",
     "Advance":            "First Interview",
-    "Hold":               "Hold",
+    "Hold":               "TBD",
     "Decline":            "Discontinued",
     "Needs Human Review": None,
 }
+
+# ---------------------------------------------------------------------------
+# Candidates table — recommendation update on decline
+# ---------------------------------------------------------------------------
+CANDIDATES_TABLE           = "tblGmwHWlWoEPnTfA"
+F_CANDIDATES_LINK          = "fldQMED2ek5EJCTFD"   # On Applications: links → Candidates table
+F_CANDIDATE_RECOMMENDATION = "fld7kwtOwLCby2vtp"   # On Candidates: Recommendations singleSelect
 
 # Round type singleSelect option IDs (confirmed from live data)
 ROUND_VIDEO_SUBMISSION  = "sel11RPB63d9K0hFG"
@@ -492,3 +502,105 @@ def advance_application_stage(
     for app_id in application_record_ids:
         url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{APPLICATIONS_TABLE}/{app_id}"
         _patch(url, {"fields": {F_STAGE: stage}}, api_key)
+
+
+def discontinue_candidate_record(
+    application_record_ids: list[str],
+    api_key: str,
+) -> None:
+    """Set Recommendations = 'Discontinue' on the Candidates record for a declined applicant.
+
+    Traversal: Application (via F_APPLICATION on Submission) → Candidates link → PATCH.
+    """
+    for app_id in application_record_ids:
+        url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{APPLICATIONS_TABLE}/{app_id}"
+        app_record = _get(url, {}, api_key)
+        candidate_ids: list[str] = app_record.get("fields", {}).get(F_CANDIDATES_LINK, [])
+        for cand_id in candidate_ids:
+            url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{CANDIDATES_TABLE}/{cand_id}"
+            _patch(url, {"fields": {F_CANDIDATE_RECOMMENDATION: "Discontinue"}}, api_key)
+
+
+# Recommendations that require a human to review before a final hiring decision.
+_REVIEW_RECOMMENDATIONS = {"Hold", "Needs Human Review"}
+
+
+def flag_review_needed(record_id: str, api_key: str) -> None:
+    """Set Review Needed = true on a Submission record so the GAS watcher picks it up."""
+    url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{SUBMISSIONS_TABLE}/{record_id}"
+    _patch(url, {"fields": {"Review Needed": True}}, api_key)
+
+
+def write_video_url_to_airtable(record_id: str, url: str, filename: str, api_key: str) -> None:
+    """
+    PATCH the Files (multipleAttachments) field with a video URL so the
+    submission video appears in Airtable.  Called AFTER scores are written so
+    the Airtable automation (Files not empty + scores empty → /evaluate) never
+    re-fires.  Only call when the field is currently empty.
+    """
+    endpoint = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{SUBMISSIONS_TABLE}/{record_id}"
+    _patch(endpoint, {"fields": {F_FILES: [{"url": url, "filename": filename}]}}, api_key)
+
+
+def upload_html_report_to_airtable(record_id: str, html_path: Path, api_key: str) -> None:
+    """
+    Upload the HTML evaluation report to the Model output field.
+
+    Uses the Airtable uploadAttachment REST endpoint (JSON body, base64-encoded file).
+    The record ID is globally unique within the base — no table ID needed in the path.
+    """
+    url = f"https://content.airtable.com/v0/{AIRTABLE_BASE_ID}/{record_id}/{F_MODEL_OUTPUT}/uploadAttachment"
+    encoded = base64.b64encode(html_path.read_bytes()).decode("ascii")
+    payload = {
+        "contentType": "text/html",
+        "file": encoded,
+        "filename": html_path.name,
+    }
+    resp = requests.post(url, headers=_headers(api_key), json=payload, timeout=60)
+    if not resp.ok:
+        print(f"  [upload_html] HTTP {resp.status_code} response body: {resp.text}")
+    resp.raise_for_status()
+
+
+def build_candidate_file_from_path(record: dict, video_path: Path) -> Optional[CandidateFile]:
+    """
+    Build a CandidateFile from a pre-downloaded video path and the Airtable
+    record metadata, skipping the Airtable attachment download step.
+
+    Used by the email ingest path (/ingest endpoint) where the video has already
+    been downloaded from Google Drive or YouTube before this function is called.
+    """
+    fields = record.get("fields", {})
+
+    candidate_names: list = fields.get(F_CANDIDATE_NAME, [])
+    if not candidate_names:
+        submission_label = fields.get(F_SUBMISSION_NAME, "")
+        if submission_label:
+            candidate_names = [submission_label]
+
+    first_name, last_name = _parse_name(candidate_names)
+    job_type = _derive_job_type(candidate_names)
+
+    warnings: list[str] = []
+    duration = get_video_duration(video_path)
+    if duration is None:
+        warnings.append(f"Could not determine duration for {video_path.name}.")
+    elif duration < config.MIN_DURATION_SECONDS:
+        warnings.append(
+            f"Video duration {duration:.1f}s is below the minimum of "
+            f"{config.MIN_DURATION_SECONDS}s."
+        )
+    elif duration > config.MAX_DURATION_SECONDS:
+        warnings.append(
+            f"Video duration {duration:.1f}s is above the maximum of "
+            f"{config.MAX_DURATION_SECONDS}s."
+        )
+
+    return CandidateFile(
+        path=video_path,
+        first_name=first_name,
+        last_name=last_name,
+        job_type=job_type,
+        duration_seconds=duration,
+        warnings=warnings,
+    )
