@@ -49,6 +49,7 @@ F_SCORE_4         = "flddiNitZN15QQlkS"   # number
 F_SCORE_5         = "fldR7xFsNNmyJp45d"   # number
 F_RECOMMENDATION  = "fldKC0LCVpzpv1Z1P"   # singleSelect
 F_NOTES           = "fldYtJUdvm7R2e6KN"   # multilineText
+F_MODEL_OUTPUT    = "fldd9rSej4iiNFlwe"   # multipleAttachments — HTML evaluation report
 # F_WEIGHTED_SCORE = "fldWy8zzT16FIt2Pz"  — formula field, auto-calculated; do not write
 
 # Airtable singleSelect names differ from pipeline labels — map at write time.
@@ -538,6 +539,30 @@ def write_video_url_to_airtable(record_id: str, url: str, filename: str, api_key
     """
     endpoint = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{SUBMISSIONS_TABLE}/{record_id}"
     _patch(endpoint, {"fields": {F_FILES: [{"url": url, "filename": filename}]}}, api_key)
+
+
+AIRTABLE_CONTENT_BASE = "https://content.airtable.com/v0"
+
+
+def upload_html_report_to_airtable(record_id: str, html_path: Path, api_key: str) -> None:
+    """
+    Upload the HTML evaluation report binary to the Model output field.
+
+    Uses content.airtable.com binary upload endpoint (multipart/form-data).
+    Cannot use the URL-based PATCH pattern — HTML is a local file with no public URL.
+    """
+    url = (
+        f"{AIRTABLE_CONTENT_BASE}/{AIRTABLE_BASE_ID}"
+        f"/{SUBMISSIONS_TABLE}/{record_id}/{F_MODEL_OUTPUT}/uploadAttachment"
+    )
+    with html_path.open("rb") as fh:
+        resp = requests.post(
+            url,
+            headers={"Authorization": f"Bearer {api_key}"},
+            files={"file": (html_path.name, fh, "text/html")},
+            timeout=60,
+        )
+    resp.raise_for_status()
 
 
 def build_candidate_file_from_path(record: dict, video_path: Path) -> Optional[CandidateFile]:

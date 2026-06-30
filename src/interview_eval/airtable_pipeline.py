@@ -20,6 +20,7 @@ from .airtable_ingest import (
     discontinue_candidate_record,
     fetch_rubric_text,
     flag_review_needed,
+    upload_html_report_to_airtable,
     write_scores_to_airtable,
 )
 from .analyze import score_transcript
@@ -119,7 +120,7 @@ def process_record(
         )
         result_obj = CandidateResult.from_pipeline(candidate, transcript, None, classification)
         _print_result(result_obj, at_record_id)
-        _write_local_outputs(result_obj, output_dir)
+        report_path = _write_local_outputs(result_obj, output_dir)
         return result_obj.model_dump()
 
     print(f"        Transcript : {transcript.word_count} words")
@@ -141,7 +142,7 @@ def process_record(
         )
         result_obj = CandidateResult.from_pipeline(candidate, transcript, None, classification)
         _print_result(result_obj, at_record_id)
-        _write_local_outputs(result_obj, output_dir)
+        report_path = _write_local_outputs(result_obj, output_dir)
         return result_obj.model_dump()
 
     # ── Step 5: Classify ───────────────────────────────────────────────────
@@ -150,12 +151,17 @@ def process_record(
     result_obj = CandidateResult.from_pipeline(candidate, transcript, analysis, classification)
 
     _print_result(result_obj, at_record_id)
-    _write_local_outputs(result_obj, output_dir)
+    report_path = _write_local_outputs(result_obj, output_dir)
 
     if write_back:
         try:
             write_scores_to_airtable(result_obj, at_record_id, airtable_key)
             print(f"  Scores written to Airtable record {at_record_id}.")
+            try:
+                upload_html_report_to_airtable(at_record_id, report_path, airtable_key)
+                print("  HTML report uploaded to Airtable (Model output).")
+            except Exception as upload_exc:
+                print(f"  WARNING: Could not upload HTML report to Airtable: {upload_exc}")
             app_ids: list[str] = record.get("fields", {}).get(F_APPLICATION, [])
             if app_ids:
                 advance_application_stage(app_ids, result_obj.recommendation, airtable_key)
@@ -209,9 +215,10 @@ def _print_result(result: CandidateResult, at_record_id: str) -> None:
     print("  └──────────────────────────────────────────────────────────────")
 
 
-def _write_local_outputs(result: CandidateResult, output_dir: Path) -> None:
+def _write_local_outputs(result: CandidateResult, output_dir: Path) -> Path:
     json_path   = write_candidate_json(result, output_dir)
     report_path = write_candidate_report(result, output_dir)
     write_batch_csv([result], output_dir)
     print(f"  Local JSON   → {json_path}")
     print(f"  Local report → {report_path}")
+    return report_path
