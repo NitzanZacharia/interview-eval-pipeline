@@ -1,0 +1,80 @@
+{
+  "candidate_id": "leslie-duceay-QA",
+  "first_name": "leslie",
+  "last_name": "duceay",
+  "job_type": "QA",
+  "evaluation_timestamp": "2026-06-30T11:21:31Z",
+  "transcript_metadata": {
+    "video_filename": "leslie-duceay-QA.mp4",
+    "video_duration_seconds": 223.818542,
+    "transcript_word_count": 616,
+    "duration_warning": null
+  },
+  "scores": {
+    "role_fit_and_relevant_experience": {
+      "score": 2,
+      "quotes": [
+        "I have been a teacher for 29 years in English",
+        "I also worked for a company where I was a content director, a content developer, I'm a subject matter expert",
+        "we have, I say we, my team and myself have put to, you know, really have to get into it and try to catch content errors"
+      ],
+      "rationale": "Leslie's background is primarily as a classroom teacher and content developer, not as a QA reviewer of digital or educational materials in a systematic accuracy-review workflow. Her 29 years of teaching experience is adjacent but not equivalent to owning a QA process. She mentions a content director role but provides no detail about what systematic review that entailed. Her error-catching examples are rooted in teacher-level curriculum critique rather than a structured QA function. This is adjacent experience that would require significant ramp to meet the core bar."
+    },
+    "domain_judgment": {
+      "score": 2,
+      "quotes": [
+        "we have a tendency to look for spelling and accuracy errors",
+        "making sure that the objectives align with the standards",
+        "I noticed that the assessments didn't, they didn't align with what we were actually teaching",
+        "anything that isn't accurate in spelling, grammar, consistency, you name it"
+      ],
+      "rationale": "Leslie identifies a couple of meaningful error categories \u2014 standards alignment and assessment-content alignment \u2014 which go beyond pure proofreading. However, she repeatedly defaults to spelling and grammar as her primary frame. She does not articulate error severity, does not mention functional/interactive errors, accessibility, or grade-level language issues, and shows no taxonomy of error types. The assessment-alignment example is the strongest signal, but overall the domain judgment is general with limited specificity."
+    },
+    "process_and_methodology": {
+      "score": 2,
+      "quotes": [
+        "the very first thing we have to do is look at it in its entirety",
+        "we have checklists, I have a checklist for almost everything that I do, literally a list for everything I do",
+        "making sure that the lessons continue to be the same throughout the whole entire unit"
+      ],
+      "rationale": "Leslie mentions using checklists, which is a positive signal, but she does not describe what is on those checklists, how many passes she takes, what she checks first versus last, or how she handles ambiguous cases. The process she describes amounts to 'read it in full, use a checklist' without any articulation of steps another person could replicate. No multi-pass methodology, no escalation logic beyond 'if I can't fix it myself,' and no edge-case handling is described."
+    },
+    "communication": {
+      "score": 2,
+      "quotes": [
+        "I say we, my team and myself have put to, you know, really have to get into it",
+        "anything that isn't accurate in spelling, grammar, consistency, you name it",
+        "I feel like if it's something that I can fix on whatever platform it is that I'm using, then I would go ahead and fix it"
+      ],
+      "rationale": "Leslie's answers are followable at a high level but frequently trail off, use filler phrases, and lack precision. Key points are stated vaguely ('you name it,' 'things like that'). The bug-ticket answer in particular is very loose \u2014 she describes a general intuition rather than a clear decision framework. A listener can track the general thread but must do inference work to extract the substance. This is understandable with effort, not crisp."
+    },
+    "instruction_following_and_professionalism": {
+      "score": 3,
+      "quotes": [
+        "I know I have three questions that I need to answer",
+        "I think I've answered the three questions",
+        "I'm looking forward to hearing back from you. Thank you so much."
+      ],
+      "rationale": "Leslie addressed all three questions, stayed within the time constraint she acknowledged, and closed professionally. The third answer on bug tickets is thin but not absent \u2014 she does address the decision logic and the concept of developer escalation. Professional tone throughout. Meets expectations without exceeding them."
+    }
+  },
+  "total_score": 11,
+  "recommendation": "Hold",
+  "recommendation_reason": "Total score 11 is borderline (11-13).",
+  "hard_fail_flags": {
+    "did_not_answer_all_questions": false,
+    "lacks_core_experience": false,
+    "cannot_communicate_clearly": false
+  },
+  "confidence_score": 0.82,
+  "overall_summary": "Leslie is a long-tenured English teacher with some content development experience, but her background does not clearly meet the core bar for a digital QA role. Her error-catching instincts are real but primarily grammar/spelling-focused, with one stronger example around assessment-content alignment. Her process is loosely described \u2014 she mentions checklists but cannot articulate a replicable multi-step methodology. Her bug-ticket answer is the weakest, showing intuition but no structured decision framework. Communication is conversational and followable but imprecise. Estimated total: 11 (2+2+2+2+3), placing her in the borderline/hold range. The primary concern is whether her teacher-side curriculum critique translates to the systematic, platform-level QA this role requires. A follow-up conversation to probe her content director work and checklist specifics could clarify whether she is closer to a 3 on Role Fit.",
+  "system_notes": {
+    "model_used": "claude-sonnet-4-6",
+    "rubric_version": "scoring_rubric.md",
+    "pipeline_version": "0.1.0",
+    "limitations": [
+      "Transcription quality may affect scoring accuracy.",
+      "Scores reflect rubric criteria only, not holistic assessment."
+    ]
+  }
+}

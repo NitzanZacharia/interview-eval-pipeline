@@ -1,0 +1,74 @@
+{
+  "candidate_id": "emily-kobelenz-QA",
+  "first_name": "emily",
+  "last_name": "kobelenz",
+  "job_type": "QA",
+  "evaluation_timestamp": "2026-06-30T11:58:22Z",
+  "transcript_metadata": {
+    "video_filename": "emily-kobelenz-QA.mp4",
+    "video_duration_seconds": 154.730667,
+    "transcript_word_count": 457,
+    "duration_warning": null
+  },
+  "scores": {
+    "role_fit_and_relevant_experience": {
+      "score": 1,
+      "quotes": [
+        "I worked at a market research firm, and my main part of the job was to ensure that over 500 documents got uploaded correctly to their website. Each document was a description of each product that they could provide, and I needed to make sure that all the formatting was correct. There were no grammar errors, that everything just looked consistent across the platform.",
+        "sometimes there would be incorrect fonts, or there would be something that was bolded that shouldn't be bolded as an example"
+      ],
+      "rationale": "The candidate's only described review experience is checking non-educational product description documents at a market research firm for visual formatting consistency \u2014 fonts, bolding, grammar. This is explicitly the type of experience the rubric identifies as not meeting the core bar: 'A candidate whose only review experience is checking non-educational documents for visual formatting consistency, with no educational content background whatsoever, does NOT meet the core bar.' There is no mention of educational content, curriculum, teaching, instructional design, or any structured learning materials. No content accuracy errors (factual, alignment, or functional) are described \u2014 only formatting issues. This triggers the hard-fail condition for lacking core experience."
+    },
+    "domain_judgment": {
+      "score": 1,
+      "quotes": [
+        "I would go through it line by line to make sure that all of the formatting was correct, as well as the spelling and the grammar.",
+        "sometimes there would be incorrect fonts, or there would be something that was bolded that shouldn't be bolded"
+      ],
+      "rationale": "The candidate's entire conception of error types is limited to formatting, spelling, and grammar. No curriculum-level or content-accuracy categories are named \u2014 no mention of standards alignment, assessment-content alignment, factual accuracy, grade-level appropriateness, or functional errors. The candidate treats QA as proofreading and visual formatting checks, with no awareness of the higher-stakes error types that define educational content QA."
+    },
+    "process_and_methodology": {
+      "score": 2,
+      "quotes": [
+        "I would keep my process consistent by taking my time and working off a checklist to make sure that I wasn't missing anything that needed to be checked",
+        "we kept like a very comprehensive spreadsheet. So I would just update the spreadsheet, and I would email the editing team and let them know this is what needs to be done, and I would continue to follow up until the errors were corrected"
+      ],
+      "rationale": "The candidate mentions using a checklist and a tracking spreadsheet, which shows some structural awareness. However, the process described is loose \u2014 'take my time,' 'go through it line by line' \u2014 with no named steps, no multi-pass methodology, and no articulation of what categories are checked in what order. The checklist is mentioned but not described in any detail. This is a loose sequence without a documented framework, placing it at a 2."
+    },
+    "communication": {
+      "score": 2,
+      "quotes": [
+        "I would obviously just take care of the ones that I knew I would be able to fix, perhaps ask a colleague, bounce an idea of them, to confirm that what I was doing was correct. Otherwise if I needed to write up a ticket, I would make sure that everything was detail-oriented, listed out, every single issue, and every single item that needed to be done.",
+        "that's pretty much it"
+      ],
+      "rationale": "Q1 and Q2 are followable but thin. Q3 is the weakest \u2014 the answer on bug tickets is vague enough that a listener cannot determine what the candidate would actually include in a ticket or how they would decide what goes to a developer versus what they fix themselves. The decision principle ('take care of the ones I knew I could fix') is stated but not explained. The ticket-writing description ('detail-oriented, listed out, every single issue') is generic and gives no concrete sense of what information would be included. Requires significant inference to extract actionable meaning from Q3."
+    },
+    "instruction_following_and_professionalism": {
+      "score": 2,
+      "quotes": [
+        "Thanks so much for reviewing my video, and I look forward to hearing from you soon.",
+        "So I would obviously just take care of the ones that I knew I would be able to fix"
+      ],
+      "rationale": "The candidate addressed all three questions, which is a baseline met. However, Q3 is notably thin and vague \u2014 the answer on bug tickets lacks any concrete example or specificity, making it effectively a non-answer in substance. The closing is professional. Overall, one answer is too thin to count as fully addressed, placing this at a 2."
+    }
+  },
+  "total_score": 8,
+  "recommendation": "Decline",
+  "recommendation_reason": "Hard fail: candidate lacks core experience for the role.",
+  "hard_fail_flags": {
+    "did_not_answer_all_questions": false,
+    "lacks_core_experience": true,
+    "cannot_communicate_clearly": false
+  },
+  "confidence_score": 0.92,
+  "overall_summary": "Emily's transcript reveals a candidate whose only described review experience is checking non-educational product description documents for visual formatting consistency (fonts, bolding, grammar) at a market research firm. This explicitly does not meet the core bar for this role, which requires either experience reviewing educational or structured learning materials for content accuracy, or substantive educational content background. No educational content experience is mentioned anywhere in the transcript. Her domain judgment is limited to surface-level formatting and grammar \u2014 she names no curriculum-level error types. Her process has some structural elements (checklist, spreadsheet) but lacks the multi-pass, categorized methodology the role requires. The hard-fail condition for lacking core experience applies. Confidence in this evaluation is high given the transcript is complete and unambiguous.",
+  "system_notes": {
+    "model_used": "claude-sonnet-4-6",
+    "rubric_version": "scoring_rubric.md",
+    "pipeline_version": "0.1.0",
+    "limitations": [
+      "Transcription quality may affect scoring accuracy.",
+      "Scores reflect rubric criteria only, not holistic assessment."
+    ]
+  }
+}

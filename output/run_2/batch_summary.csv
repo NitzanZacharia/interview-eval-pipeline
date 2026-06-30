@@ -1,0 +1,3 @@
+candidate_id,first_name,last_name,job_type,total_score,role_fit,domain_judgment,process,communication,instruction_following,recommendation,confidence,hard_fail,evaluation_timestamp
+emily-kobelenz-QA,emily,kobelenz,QA,10,1,1,2,3,3,Decline,0.92,true,2026-06-30T11:31:16Z
+leslie-duceay-QA,leslie,duceay,QA,13,3,3,2,2,3,Hold,0.78,false,2026-06-30T11:32:50Z

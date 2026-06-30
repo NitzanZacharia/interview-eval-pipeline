@@ -1,0 +1,82 @@
+{
+  "candidate_id": "leslie-duceay-QA",
+  "first_name": "leslie",
+  "last_name": "duceay",
+  "job_type": "QA",
+  "evaluation_timestamp": "2026-06-30T12:00:03Z",
+  "transcript_metadata": {
+    "video_filename": "leslie-duceay-QA.mp4",
+    "video_duration_seconds": 223.818542,
+    "transcript_word_count": 612,
+    "duration_warning": null
+  },
+  "scores": {
+    "role_fit_and_relevant_experience": {
+      "score": 3,
+      "quotes": [
+        "I have been a teacher for 29 years in English",
+        "I also worked for a company where I was a content director, a content developer, I'm a subject matter expert",
+        "I noticed that the assessments didn't, they didn't align with what we were actually teaching, and so it was often that we had to go back and correct those assessments"
+      ],
+      "rationale": "Leslie has 29 years of English teaching experience plus a content director/developer role, giving her substantive educational content background. She describes a specific curriculum-level error she personally caught \u2014 assessment-content misalignment \u2014 which meets the bar for Score 3. She does not describe owning a formal QA role as primary reviewer of a digital product, and her content director work is described briefly without enough detail to confirm she was the primary accuracy reviewer. The two-part test for Score 4 is partially met (she caught a specific content accuracy error), but the formal QA ownership signal is absent. Score 3 is appropriate."
+    },
+    "domain_judgment": {
+      "score": 3,
+      "quotes": [
+        "the very first thing we have to do is look at it in its entirety, making sure that the objectives align with the standards",
+        "I noticed that the assessments didn't, they didn't align with what we were actually teaching",
+        "we have a tendency to look for spelling and accuracy errors",
+        "consistency, you name it"
+      ],
+      "rationale": "Leslie names multiple error categories: standards alignment, assessment-content alignment, spelling/grammar, and consistency. She goes beyond surface-level proofreading by identifying a curriculum-integrity error (assessment misalignment). She does not explicitly rank errors by severity or name additional categories like factual inaccuracy or accessibility, and her concrete example is limited to one instance. This is solid domain judgment that earns a 3 but does not reach the depth and multiple concrete examples required for a 4."
+    },
+    "process_and_methodology": {
+      "score": 3,
+      "quotes": [
+        "the very first thing we have to do is look at it in its entirety",
+        "making sure that the objectives align with the standards",
+        "we have checklists, I have a checklist for almost everything that I do, literally a list for everything I do",
+        "so that would keep me consistent with making sure that the lessons continue to be the same throughout the whole entire unit"
+      ],
+      "rationale": "Leslie describes a recognizable multi-stage process: (1) holistic overview of the lesson in its entirety, (2) standards/objectives alignment check, (3) checklist-based review for consistency across the unit. This maps to the rubric's example of a three-stage process that qualifies for Score 3. She does not describe explicit escalation judgment, edge-case handling, or a documented multi-pass system for different error categories, which would be needed for a 4."
+    },
+    "communication": {
+      "score": 3,
+      "quotes": [
+        "the very first thing we have to do is look at it in its entirety, making sure that the objectives align with the standards",
+        "I noticed that the assessments didn't, they didn't align with what we were actually teaching",
+        "if it's something that I can fix on whatever platform it is that I'm using, then I would go ahead and fix it",
+        "if there's a link or something that isn't working well, then that would have to go back to the developer for sure"
+      ],
+      "rationale": "Leslie's answers are followable throughout. Each question is addressed in sequence, and the through-line is clear even with conversational filler ('I say we,' 'you name it'). Her Q3 answer is brief but lands on a clear decision principle: fix what you can yourself, escalate to developers what you cannot (e.g., broken links). Per the rubric, a brief but direct Q3 answer does not warrant a 2. Filler words and informal phrasing do not reduce the score. She does not demonstrate the precision or structure needed for a 4."
+    },
+    "instruction_following_and_professionalism": {
+      "score": 3,
+      "quotes": [
+        "I know I have three questions that I need to answer",
+        "I think I've answered the three questions",
+        "I hope I'm looking forward to hearing back from you. Thank you so much."
+      ],
+      "rationale": "Leslie explicitly acknowledges all three questions and addresses each one. She is aware of the time constraint and attempts to stay within it. Her closing is professional. One answer (Q3) is thin but not absent. No questions were skipped. This meets the bar for a 3."
+    }
+  },
+  "total_score": 15,
+  "recommendation": "Advance",
+  "recommendation_reason": "Total score 15 meets the threshold (>=14) and Role Fit 3 meets the gating criterion (>=3).",
+  "hard_fail_flags": {
+    "did_not_answer_all_questions": false,
+    "lacks_core_experience": false,
+    "cannot_communicate_clearly": false
+  },
+  "confidence_score": 0.78,
+  "overall_summary": "Leslie is a 29-year English teacher with additional experience as a content director and subject matter expert. She demonstrates genuine domain knowledge, catches a meaningful curriculum-level error (assessment-content misalignment), and describes a recognizable multi-stage review process anchored by checklists. Her answers are followable and professional. The main limitations are: her QA process description, while qualifying for Score 3, lacks the edge-case handling and escalation nuance of a Score 4; her Q3 answer on bug ticketing is brief and does not describe how she would write up an issue for a developer; and her content director experience is mentioned but not elaborated enough to confirm primary QA ownership. Total estimated score: 15/20. Recommend advance to interview, with Q3 (bug ticket writing mechanics) as a follow-up probe.",
+  "system_notes": {
+    "model_used": "claude-sonnet-4-6",
+    "rubric_version": "scoring_rubric.md",
+    "pipeline_version": "0.1.0",
+    "limitations": [
+      "Transcription quality may affect scoring accuracy.",
+      "Scores reflect rubric criteria only, not holistic assessment."
+    ]
+  }
+}

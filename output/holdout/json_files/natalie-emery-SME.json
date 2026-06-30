@@ -1,0 +1,81 @@
+{
+  "candidate_id": "natalie-emery-SME",
+  "first_name": "natalie",
+  "last_name": "emery",
+  "job_type": "SME",
+  "evaluation_timestamp": "2026-06-30T12:03:53Z",
+  "transcript_metadata": {
+    "video_filename": "natalie-emery-SME.mp4",
+    "video_duration_seconds": 340.112789,
+    "transcript_word_count": 802,
+    "duration_warning": null
+  },
+  "scores": {
+    "role_fit_and_relevant_experience": {
+      "score": 3,
+      "quotes": [
+        "I was asked to teach a construction technology course due to high enrollment and lack of instructors...there was no curriculum for me to follow. I had to start from scratch.",
+        "I found it very challenging to buy all the materials I needed...we ended up networking with...the builder. I asked the builder to sponsor us for a project...they agreed to donate all the materials.",
+        "in order to add certifications in our district, we had to get approval and funding from CTE supervisors, which wasn't always easy to do."
+      ],
+      "rationale": "Natalie describes building a CTE course from scratch with no existing curriculum, which goes beyond pure delivery. She navigated real funding constraints by securing donated materials and partnering with student government for project funding \u2014 informal but genuine compliance-adjacent work. She also demonstrates awareness of the certification approval process through CTE supervisors. However, she did not hold a formal program coordinator or director role, and her compliance navigation was informal rather than through Perkins documentation or articulation agreements. This maps to a 3: a classroom teacher who developed curriculum from scratch and navigated at least one funding/compliance process."
+    },
+    "domain_judgment": {
+      "score": 3,
+      "quotes": [
+        "Students passed safety tests in this course, but they did not pass any like recognized credentials for the course looking back. It would be beneficial to have a certification like the NCCER core and construction technology certification.",
+        "in order to add certifications in our district, we had to get approval and funding from CTE supervisors",
+        "I would review the financial requirements of everything that needs to be purchased to ensure that Perkins funding guidelines are in compliance",
+        "I would evaluate the certification tests to map them to make sure that all the skills on the tests are mapped into the standards and the curriculum"
+      ],
+      "rationale": "Natalie names specific compliance types: Perkins funding guidelines, industry certification bodies (NCCER), CTE supervisor approval processes, and standards alignment. She names at least two distinct requirement types and demonstrates understanding that CTE courses carry obligations beyond academic content. She does not demonstrate layered knowledge of how these requirements might conflict or how to prioritize among them, which would be needed for a 4. But the specificity of NCCER and Perkins by name, combined with her lived experience navigating certification approval, earns a solid 3."
+    },
+    "process_and_methodology": {
+      "score": 3,
+      "quotes": [
+        "I would first locate and review the suggested curriculum materials associated with the course. And once I found those, I would check to make sure that they're aligned with the standards and take notes of any standards not included in the materials.",
+        "Next I would make sure, look at the assignments, assessments and projects, make sure that they are mapped to the standards.",
+        "I would evaluate the certification tests to map them to make sure that all the skills on the tests are mapped into the standards and the curriculum.",
+        "Then I would review the financial requirements of everything that needs to be purchased to ensure that Perkins funding guidelines are in compliance.",
+        "And then last I would document...make sure that all of the gaps are documented clearly and concisely so that the writers can fill in the gaps."
+      ],
+      "rationale": "Natalie describes a clear, multi-step review sequence: curriculum materials \u2192 standards alignment \u2192 assignments/assessments mapping \u2192 student association integration \u2192 certification test mapping \u2192 Perkins funding compliance \u2192 gap documentation for writers. This is a genuine multi-layer compliance review process with named steps across different requirement types. She does not address edge cases (conflicting requirements, prioritization) which would push to a 4, but the sequence is clear and repeatable, earning a 3."
+    },
+    "communication": {
+      "score": 3,
+      "quotes": [
+        "Creating the lectures for this course wasn't the hard part. It was helping students make real-world connections with the content that really challenged me.",
+        "To come up to speed on a course in a pathway outside my expertise, I would first find and review the course standards.",
+        "I would first locate and review the suggested curriculum materials associated with the course...Next I would make sure...Next I would make sure...Then I would review...And then last I would document"
+      ],
+      "rationale": "Natalie's answers are followable and organized. Questions 2 and 3 in particular are delivered in a clear sequential format that is easy to track. Question 1 is more narrative and takes some time to arrive at the compliance-relevant content, but the through-line is traceable. Some filler and informal phrasing ('you know,' 'like') are present but do not impede comprehension. She demonstrates the ability to structure revision direction in a way a writing team could act on. No significant tangents or lost threads. A solid 3."
+    },
+    "instruction_following_and_professionalism": {
+      "score": 3,
+      "quotes": [
+        "Question one...Question two...Question three...",
+        "Thank you so much for this opportunity and I hope to hear from you soon."
+      ],
+      "rationale": "Natalie answered all three questions, labeled them explicitly, and closed professionally. Each answer contains substantive content with at least one concrete example. The closing is warm and appropriate. No questions were skipped or thinly addressed. Meets all expectations for a 3; does not exceed them with exceptional depth or polish across all three to warrant a 4."
+    }
+  },
+  "total_score": 15,
+  "recommendation": "Advance",
+  "recommendation_reason": "Total score 15 meets the threshold (>=14) and Role Fit 3 meets the gating criterion (>=3).",
+  "hard_fail_flags": {
+    "did_not_answer_all_questions": false,
+    "lacks_core_experience": false,
+    "cannot_communicate_clearly": false
+  },
+  "confidence_score": 0.82,
+  "overall_summary": "Natalie Emery presents as a solid CTE practitioner who has moved beyond pure classroom delivery into curriculum development and informal compliance navigation. Her strongest signal is Question 3, where she articulates a genuine multi-step compliance review process naming Perkins funding and NCCER certification specifically. Her domain knowledge is specific enough to distinguish her from a general curriculum reviewer. The main limitation is that her program-level experience is informal \u2014 she has not held a coordinator or director title, and her compliance work was reactive rather than systematic. She would likely need some ramp on formal Perkins documentation and articulation agreement processes. Overall she scores in the advance range: estimated total 15/20, with Role Fit at 3 meeting the gating criterion.",
+  "system_notes": {
+    "model_used": "claude-sonnet-4-6",
+    "rubric_version": "scoring_rubric.md",
+    "pipeline_version": "0.1.0",
+    "limitations": [
+      "Transcription quality may affect scoring accuracy.",
+      "Scores reflect rubric criteria only, not holistic assessment."
+    ]
+  }
+}

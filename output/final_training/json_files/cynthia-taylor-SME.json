@@ -1,0 +1,83 @@
+{
+  "candidate_id": "cynthia-taylor-SME",
+  "first_name": "cynthia",
+  "last_name": "taylor",
+  "job_type": "SME",
+  "evaluation_timestamp": "2026-06-30T11:57:07Z",
+  "transcript_metadata": {
+    "video_filename": "cynthia-taylor-SME.mp4",
+    "video_duration_seconds": 288.577596,
+    "transcript_word_count": 624,
+    "duration_warning": null
+  },
+  "scores": {
+    "role_fit_and_relevant_experience": {
+      "score": 4,
+      "quotes": [
+        "I used to work for Florida Technical College as the Program Director for Criminal Justice, IT and cybersecurity",
+        "They didn't have a cybersecurity program when I started and so I was responsible for helping to build a program from the ground up",
+        "I had to find the subject matter experts, I had to deal with the budget, I had to coordinate all of the design of the courses being created",
+        "That included going through any of the certifications that were going to be able to be taken after they go through the program. So cybersecurity plus, comptia, A plus and all those different certifications",
+        "I was also responsible for our in registered nursing to bachelor's in nursing programs and I worked very closely with the hospitals"
+      ],
+      "rationale": "Cynthia held a Program Director title and explicitly built a cybersecurity program from scratch, managing budget, SME coordination, and certification alignment. She also oversaw allied health and nursing-to-BSN programs at the University of Phoenix, coordinating with hospitals on curriculum crosswalks. This is clearly program-level CTE work with direct compliance and certification navigation \u2014 not classroom delivery. Scores a 4."
+    },
+    "domain_judgment": {
+      "score": 3,
+      "quotes": [
+        "going through any of the certifications that were going to be able to be taken after they go through the program. So cybersecurity plus, comptia, A plus",
+        "I worked very closely with the hospitals to see what they wanted for individuals that would be graduating from our program and then we did a crosswalk of aligning our curriculum with their requirements",
+        "it's all about alignment... start with what the certification requirements were. Align what the course teachings are with the certification",
+        "make sure that you do a gap analysis to align your course curriculum with any certification or any industry standards"
+      ],
+      "rationale": "Cynthia demonstrates solid understanding of certification body requirements (CompTIA, PHR) and articulation-style alignment with external partners (hospitals). She names specific certification bodies and describes a gap analysis approach. However, she does not explicitly reference Perkins funding, state CTE standards frameworks by name, or articulation agreements as a formal mechanism. Her compliance knowledge is real and specific but does not demonstrate the layered, multi-framework fluency that would earn a 4."
+    },
+    "process_and_methodology": {
+      "score": 3,
+      "quotes": [
+        "I had to find the subject matter experts, I had to deal with the budget, I had to coordinate all of the design of the courses being created",
+        "I leaned very heavily on subject matter experts. I used a lot of advisory boards",
+        "I had to start with what the certification requirements were. Align what the course teachings are with the certification",
+        "make sure that you do a gap analysis to align your course curriculum with any certification or any industry standards to make sure that you hit all those targets"
+      ],
+      "rationale": "Cynthia describes a clear multi-step approach: identify certification requirements, align course content, conduct a gap analysis, and use SMEs/advisory boards to fill knowledge gaps in unfamiliar pathways. This is a repeatable, multi-step process across different requirement types. She does not address edge cases (conflicting requirements, prioritization for writing teams) or describe how gaps become specific revision instructions, which would be needed for a 4."
+    },
+    "communication": {
+      "score": 3,
+      "quotes": [
+        "So again, with this one, it's all about alignment",
+        "it's really about making sure that you do a gap analysis to align your course curriculum with any certification or any industry standards",
+        "I leaned very heavily on subject matter experts. I used a lot of advisory boards"
+      ],
+      "rationale": "Cynthia's answers are followable and organized around concrete examples. She moves logically through each question, uses specific examples (Florida Technical College, University of Phoenix, PHR certification course), and lands on clear takeaways. Delivery is conversational with some repetition and informal phrasing, but the through-line is easy to track. No significant tangents. Meets the bar for a 3 comfortably."
+    },
+    "instruction_following_and_professionalism": {
+      "score": 3,
+      "quotes": [
+        "I'm going to start with the first question",
+        "The next question asked me to answer a time where I had to deal with a program that I may not have known as well",
+        "in regards to the final question on drafting a CTE course and what would I check to ensure that it is done right"
+      ],
+      "rationale": "Cynthia explicitly addresses all three questions in sequence, signals each transition, and provides a concrete example for each. Tone is professional and prepared. Answers are substantive though not deeply detailed on every point. Meets expectations solidly; does not quite reach the specificity and polish of a 4."
+    }
+  },
+  "total_score": 16,
+  "recommendation": "Advance",
+  "recommendation_reason": "Total score 16 meets the threshold (>=14) and Role Fit 4 meets the gating criterion (>=3).",
+  "hard_fail_flags": {
+    "did_not_answer_all_questions": false,
+    "lacks_core_experience": false,
+    "cannot_communicate_clearly": false
+  },
+  "confidence_score": 0.82,
+  "overall_summary": "Cynthia Taylor presents as a strong candidate with genuine program-level CTE experience \u2014 she built a cybersecurity program from scratch as Program Director, managed multi-pathway oversight including allied health and nursing, and navigated certification alignment processes. Her domain knowledge is solid and specific (CompTIA certifications, PHR, hospital curriculum crosswalks) though she does not demonstrate explicit familiarity with Perkins funding or state CTE standards frameworks by name, which caps her domain judgment at a 3. Her process is clear and repeatable but lacks the edge-case thinking and writing-team-facing specificity that would push methodology to a 4. Communication is conversational but followable. Overall a well-qualified candidate who likely meets the advance threshold. Confidence is slightly reduced because the transcript is a self-recorded response rather than a live interview, limiting the ability to probe depth on compliance specifics.",
+  "system_notes": {
+    "model_used": "claude-sonnet-4-6",
+    "rubric_version": "scoring_rubric.md",
+    "pipeline_version": "0.1.0",
+    "limitations": [
+      "Transcription quality may affect scoring accuracy.",
+      "Scores reflect rubric criteria only, not holistic assessment."
+    ]
+  }
+}

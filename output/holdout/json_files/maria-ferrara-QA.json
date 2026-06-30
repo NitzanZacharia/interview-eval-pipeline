@@ -1,0 +1,77 @@
+{
+  "candidate_id": "maria-ferrara-QA",
+  "first_name": "maria",
+  "last_name": "ferrara",
+  "job_type": "QA",
+  "evaluation_timestamp": "2026-06-30T12:01:49Z",
+  "transcript_metadata": {
+    "video_filename": "maria-ferrara-QA.mp4",
+    "video_duration_seconds": 152.564917,
+    "transcript_word_count": 445,
+    "duration_warning": null
+  },
+  "scores": {
+    "role_fit_and_relevant_experience": {
+      "score": 3,
+      "quotes": [
+        "I reviewed an online test, and one of the multiple choice questions allowed to correct answers, so I went back to the designer and pointed it out. It turns out it should have been a multiple selection question, really rather than a multiple choice.",
+        "Generally speaking, I had the ability to work directly with the developers, so that was a plus.",
+        "she went into the question database, she rewrote the question, she told me it was done, I pulled it up, I retested it, and everything worked out fine."
+      ],
+      "rationale": "Maria describes reviewing an online test (educational/digital material) and catching a functional content error \u2014 a multiple-choice question that allowed two correct answers when it should have been a multiple-selection question. This is a specific content accuracy error in a structured learning material, not merely a grammar or formatting check. She also describes a verification loop (retesting after the fix), which signals real QA experience. However, she does not elaborate on the broader scope of her QA role, her title, or whether this was a primary responsibility. The evidence is sufficient for a 3 \u2014 she caught a specific content error in educational materials and describes a systematic follow-through \u2014 but not enough for a 4, as there is no evidence of curriculum-level errors (standards alignment, assessment-content alignment) or a formal QA ownership role."
+    },
+    "domain_judgment": {
+      "score": 2,
+      "quotes": [
+        "I'd check the page layout for any obvious formatting issues, I'd proofread all the text, I'd review all the graphics, I'd test all the interaction",
+        "one of the multiple choice questions allowed to correct answers",
+        "if there were something obvious like typos or some formatting thing that was really obvious and easy to correct"
+      ],
+      "rationale": "Maria names several review categories \u2014 layout/formatting, text proofreading, graphics, and interaction testing \u2014 which shows she goes beyond pure grammar checks. Her concrete example (a multiple-choice question with two correct answers) is a functional/content error, not just a surface error, which is a positive signal. However, she never names curriculum-level error types such as standards alignment, grade-level appropriateness, factual accuracy, or assessment-content alignment. Her framing of errors skews toward the visible and functional (formatting, typos, interaction bugs) rather than demonstrating awareness of deeper content integrity issues. She does not articulate why some errors are more serious than others. This is general awareness with limited differentiation \u2014 a 2."
+    },
+    "process_and_methodology": {
+      "score": 3,
+      "quotes": [
+        "I would take a quick tour of the lesson, I'd check the page layout for any obvious formatting issues, I'd proofread all the text, I'd review all the graphics, I'd test all the interaction, and as I was doing each of those things I'd be making notes, finally I'd walk through the entire lesson from start to finish referencing my notes and making sure that I caught everything that I could.",
+        "she went into the question database, she rewrote the question, she told me it was done, I pulled it up, I retested it, and everything worked out fine."
+      ],
+      "rationale": "Maria describes a clear multi-step review sequence: (1) quick tour/overview, (2) structured pass covering layout, text, graphics, and interactions with note-taking, (3) final walkthrough referencing notes. This is a three-stage process \u2014 holistic overview, itemized review with documentation, and a consolidation pass \u2014 which qualifies for a 3 per the rubric. Her example also shows a verification loop (retest after fix). She does not describe a formal checklist tool, explicit escalation decision criteria beyond 'can I do it myself,' or edge-case handling, so a 4 is not warranted. But the sequence is clear, repeatable, and described with enough specificity to be replicable."
+    },
+    "communication": {
+      "score": 3,
+      "quotes": [
+        "I would take a quick tour of the lesson, I'd check the page layout for any obvious formatting issues, I'd proofread all the text, I'd review all the graphics, I'd test all the interaction",
+        "I reviewed an online test, and one of the multiple choice questions allowed to correct answers, so I went back to the designer and pointed it out.",
+        "I would go through and record the interaction or whatever else and narrate it so that I could explain what I was seeing and why I would think it was an error, and then if I didn't have that ability to record, I'd probably create a bunch of screenshots and put arrows and notes all over them"
+      ],
+      "rationale": "Maria's answers are followable and organized. Each question is addressed in sequence, and the through-line of each answer is easy to track. Her Q2 example is told as a clear narrative with a beginning, middle, and end. Her Q3 answer articulates a concrete decision principle (fix what I can, ticket what requires coding) and describes two practical documentation methods (screen recording with narration, annotated screenshots). Delivery is conversational but not rambling. No significant tangents. Filler words are present but do not impede comprehension. A 4 would require more precise, structured language and the kind of unambiguous clarity needed for writing bug tickets \u2014 her answer is solid but not crisp enough to reach that bar."
+    },
+    "instruction_following_and_professionalism": {
+      "score": 3,
+      "quotes": [
+        "I'm responding to your email with the three questions in it, so here we go.",
+        "I think that's all you asked for right now, thanks very much for this opportunity."
+      ],
+      "rationale": "Maria answered all three questions in order, addressed each substantively, and closed professionally. She explicitly acknowledged the format (responding to emailed questions) and confirmed she covered everything asked. Her Q2 answer includes a concrete specific example. Q3 is addressed with two practical documentation methods. No questions were skipped. Tone is professional and appropriate. She does not reach a 4 because her answers, while complete, lack the depth and preparation signals (e.g., multiple prepared examples, polished closing) that would indicate she exceeded expectations."
+    }
+  },
+  "total_score": 14,
+  "recommendation": "Advance",
+  "recommendation_reason": "Total score 14 meets the threshold (>=14) and Role Fit 3 meets the gating criterion (>=3).",
+  "hard_fail_flags": {
+    "did_not_answer_all_questions": false,
+    "lacks_core_experience": false,
+    "cannot_communicate_clearly": false
+  },
+  "confidence_score": 0.78,
+  "overall_summary": "Maria Farahra presents as a competent QA practitioner with real experience reviewing digital/educational materials for functional and content errors. Her strongest signal is the Q2 example \u2014 catching a multiple-choice question that incorrectly allowed two correct answers \u2014 which demonstrates she can identify content-level errors beyond surface formatting. Her process is structured and multi-step, qualifying for a 3 in methodology. Her main gaps are in domain judgment (no mention of curriculum-level error types like standards alignment or factual accuracy) and in the depth of her QA background (scope and seniority of her role are unclear). Confidence is moderate (0.78) because the transcript is relatively brief and does not reveal the full scope of her QA experience \u2014 it is possible she has more relevant background than she described. Total estimated score: 14 (3+2+3+3+3), which meets the advance threshold with a Role Fit score of 3.",
+  "system_notes": {
+    "model_used": "claude-sonnet-4-6",
+    "rubric_version": "scoring_rubric.md",
+    "pipeline_version": "0.1.0",
+    "limitations": [
+      "Transcription quality may affect scoring accuracy.",
+      "Scores reflect rubric criteria only, not holistic assessment."
+    ]
+  }
+}
