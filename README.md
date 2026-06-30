@@ -248,6 +248,8 @@ After each successful evaluation the pipeline PATCHes results into the Candidate
 | `Decline` | `Strong no` | Discontinued | Recommendations → `Discontinue` |
 | `Needs Human Review` | _(skipped)_ | _(unchanged)_ | _(unchanged)_ |
 
+In addition, after every successful evaluation the pipeline uploads the HTML evaluation report as a binary attachment to the **Model output** field (`multipleAttachments`) on the Candidate Submissions record. This uses the Airtable `uploadAttachment` endpoint (`POST https://content.airtable.com/v0/{baseId}/{recordId}/{fieldId}/uploadAttachment`) with a JSON body containing the base64-encoded HTML file. The upload runs after scores are written, so it never re-triggers the Airtable Automation.
+
 > **Note:** Transcription and scoring failures are never written back. Those records keep `Score 1` blank so they are retried on the next run. A `Needs Human Review` result also sets the `Review Needed` checkbox on the Submission record; the GAS email watcher picks this up and emails HR on its next poll.
 
 ---
@@ -283,7 +285,7 @@ railway up --service Airtable_integration
 | Module | Responsibility |
 |:---|:---|
 | `ingest.py` | File scanning, filename validation, directory management |
-| `airtable_ingest.py` | Airtable API polling, video download, rubric fetching, score write-back, stage advancement, candidate discontinuation |
+| `airtable_ingest.py` | Airtable API polling, video download, rubric fetching, score write-back, HTML report upload, stage advancement, candidate discontinuation |
 | `airtable_pipeline.py` | Per-record pipeline orchestration shared by CLI script and FastAPI server |
 | `server.py` | FastAPI server — `/evaluate` for Airtable Automation, `/ingest` for GAS email watcher |
 | `transcribe.py` | FFmpeg audio extraction + faster-whisper transcription |

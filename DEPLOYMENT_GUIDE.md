@@ -85,6 +85,7 @@ The pipeline reads and writes these fields by field ID. After pointing the code 
 | Notes | multilineText | Write (AI summary) |
 | Application | multipleRecordLinks → Applications | Read (for stage update) |
 | Review Needed | checkbox | Write |
+| **Model output** | **multipleAttachments** | **Write (HTML evaluation report)** |
 
 ### 1.4 Verify required singleSelect option names
 
@@ -106,6 +107,29 @@ Airtable write-back uses **display name strings**, not choice IDs. The following
 
 **Candidate Submissions → Round type field:**
 - `Video Submission`
+
+### 1.5 Create the "Model output" field in the production Candidate Submissions table
+
+The pipeline uploads the HTML evaluation report as an attachment after every scoring run. This field does **not** exist by default — you must create it manually in the production base.
+
+- [ ] Open the **Candidate Submissions** table in the production base
+- [ ] Add a new field: **Name** → `Model output` | **Type** → `Attachments`
+- [ ] After creating the field, retrieve its field ID:
+  - Option A: Use the Airtable REST API — `GET https://api.airtable.com/v0/meta/bases/{baseId}/tables` and find the `id` of the `Model output` field in the `Candidate Submissions` table
+  - Option B: Open the field's context menu → **Copy field ID**
+- [ ] In `src/interview_eval/airtable_ingest.py`, update the constant:
+
+```python
+F_MODEL_OUTPUT = "fld_PRODUCTION_FIELD_ID_HERE"   # multipleAttachments — HTML evaluation report
+```
+
+The upload itself uses this endpoint (no other change needed):
+```
+POST https://content.airtable.com/v0/{AIRTABLE_BASE_ID}/{recordId}/{F_MODEL_OUTPUT}/uploadAttachment
+```
+`AIRTABLE_BASE_ID` is already updated in step 1.5 below, so only `F_MODEL_OUTPUT` needs to change here.
+
+> **Note:** The sandbox field ID (`fldd9rSej4iiNFlwe`) will not exist in the production base. Using the sandbox ID in production will cause 404 errors on every upload. This is the **only** field ID that differs between sandbox and production (all others are identical because the sandbox was duplicated from production before this field was added).
 
 ### 1.5 Update `AIRTABLE_BASE_ID` in the code
 
@@ -302,11 +326,12 @@ Complete list of all credentials that differ between Sandbox and Production:
 
 ### Code constants that need updating (requires redeploy)
 
-The sandbox was duplicated from production, so table IDs and field IDs are the same in both bases. Only the Base ID and GAS configuration values need to change:
+Most table IDs and field IDs are identical between sandbox and production (sandbox was duplicated from production). The exceptions are the Base ID and the `Model output` field ID, which was added to the sandbox after the duplication:
 
 | File | Variable | Change |
 |:---|:---|:---|
-| `src/interview_eval/airtable_ingest.py` | `AIRTABLE_BASE_ID` | Production Base ID (only this line changes) |
+| `src/interview_eval/airtable_ingest.py` | `AIRTABLE_BASE_ID` | Production Base ID |
+| `src/interview_eval/airtable_ingest.py` | `F_MODEL_OUTPUT` | Field ID of the `Model output` column in the production base (created in step 1.5) |
 | `scripts/gmail_watcher.gs` | `AIRTABLE_BASE_ID` | Same production Base ID |
 | `scripts/gmail_watcher.gs` | `DRIVE_FOLDER_ID` | Production Google Drive folder ID |
 | `scripts/gmail_watcher.gs` | `HR_NOTIFICATION_EMAIL` | Production HR email address |
