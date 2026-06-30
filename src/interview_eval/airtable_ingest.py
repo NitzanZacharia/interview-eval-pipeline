@@ -13,6 +13,7 @@ Environment variable: AIRTABLE_TOKEN
 """
 from __future__ import annotations
 
+import base64
 import os
 import re
 import time
@@ -541,27 +542,21 @@ def write_video_url_to_airtable(record_id: str, url: str, filename: str, api_key
     _patch(endpoint, {"fields": {F_FILES: [{"url": url, "filename": filename}]}}, api_key)
 
 
-AIRTABLE_CONTENT_BASE = "https://content.airtable.com/v0"
-
-
 def upload_html_report_to_airtable(record_id: str, html_path: Path, api_key: str) -> None:
     """
-    Upload the HTML evaluation report binary to the Model output field.
+    Upload the HTML evaluation report to the Model output field.
 
-    Uses content.airtable.com binary upload endpoint (multipart/form-data).
-    Cannot use the URL-based PATCH pattern — HTML is a local file with no public URL.
+    Uses the Airtable uploadAttachment REST endpoint (JSON body, base64-encoded file).
+    The record ID is globally unique within the base — no table ID needed in the path.
     """
-    url = (
-        f"{AIRTABLE_CONTENT_BASE}/{AIRTABLE_BASE_ID}"
-        f"/{record_id}/{F_MODEL_OUTPUT}/uploadAttachment"
-    )
-    with html_path.open("rb") as fh:
-        resp = requests.post(
-            url,
-            headers={"Authorization": f"Bearer {api_key}"},
-            files={"file": (html_path.name, fh, "text/html")},
-            timeout=60,
-        )
+    url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{record_id}/{F_MODEL_OUTPUT}/uploadAttachment"
+    encoded = base64.b64encode(html_path.read_bytes()).decode("ascii")
+    payload = {
+        "contentType": "text/html",
+        "file": encoded,
+        "filename": html_path.name,
+    }
+    resp = requests.post(url, headers=_headers(api_key), json=payload, timeout=60)
     if not resp.ok:
         print(f"  [upload_html] HTTP {resp.status_code} response body: {resp.text}")
     resp.raise_for_status()
