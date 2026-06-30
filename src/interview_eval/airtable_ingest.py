@@ -77,6 +77,13 @@ _STAGE_MAP: dict[str, str | None] = {
     "Needs Human Review": None,
 }
 
+# ---------------------------------------------------------------------------
+# Candidates table — recommendation update on decline
+# ---------------------------------------------------------------------------
+CANDIDATES_TABLE           = "tblGmwHWlWoEPnTfA"
+F_CANDIDATES_LINK          = "fldQMED2ek5EJCTFD"   # On Applications: links → Candidates table
+F_CANDIDATE_RECOMMENDATION = "fld7kwtOwLCby2vtp"   # On Candidates: Recommendations singleSelect
+
 # Round type singleSelect option IDs (confirmed from live data)
 ROUND_VIDEO_SUBMISSION  = "sel11RPB63d9K0hFG"
 ROUND_PRACTICAL_TASK    = "selleUvcssoa4WCXs"
@@ -493,6 +500,23 @@ def advance_application_stage(
     for app_id in application_record_ids:
         url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{APPLICATIONS_TABLE}/{app_id}"
         _patch(url, {"fields": {F_STAGE: stage}}, api_key)
+
+
+def discontinue_candidate_record(
+    application_record_ids: list[str],
+    api_key: str,
+) -> None:
+    """Set Recommendations = 'Discontinue' on the Candidates record for a declined applicant.
+
+    Traversal: Application (via F_APPLICATION on Submission) → Candidates link → PATCH.
+    """
+    for app_id in application_record_ids:
+        url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{APPLICATIONS_TABLE}/{app_id}"
+        app_record = _get(url, {}, api_key)
+        candidate_ids: list[str] = app_record.get("fields", {}).get(F_CANDIDATES_LINK, [])
+        for cand_id in candidate_ids:
+            url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{CANDIDATES_TABLE}/{cand_id}"
+            _patch(url, {"fields": {F_CANDIDATE_RECOMMENDATION: "Discontinue"}}, api_key)
 
 
 # Recommendations that require a human to review before a final hiring decision.

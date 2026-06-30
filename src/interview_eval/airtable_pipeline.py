@@ -17,6 +17,7 @@ from .airtable_ingest import (
     advance_application_stage,
     airtable_record_to_candidate_file,
     build_candidate_file_from_path,
+    discontinue_candidate_record,
     fetch_rubric_text,
     flag_review_needed,
     write_scores_to_airtable,
@@ -161,6 +162,12 @@ def process_record(
                 new_stage = _STAGE_MAP.get(result_obj.recommendation)
                 if new_stage:
                     print(f"  Stage updated    → {new_stage}")
+                if result_obj.recommendation == "Decline":
+                    try:
+                        discontinue_candidate_record(app_ids, airtable_key)
+                        print("  Candidate Recommendations → Discontinue")
+                    except Exception as disc_exc:
+                        print(f"  WARNING: Could not update Candidate Recommendations: {disc_exc}")
         except Exception as exc:
             print(
                 f"  WARNING: Airtable write failed for {at_record_id}: {exc}\n"
