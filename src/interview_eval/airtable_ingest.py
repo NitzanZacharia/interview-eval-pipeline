@@ -559,7 +559,8 @@ def upload_html_report_to_airtable(record_id: str, html_path: Path, api_key: str
         resp = requests.post(
             url,
             headers={"Authorization": f"Bearer {api_key}"},
-            files={"file": (html_path.name, fh, "text/html")},
+            data={"filename": html_path.name, "contentType": "text/html"},
+            files={"file": fh},
             timeout=60,
         )
     resp.raise_for_status()
