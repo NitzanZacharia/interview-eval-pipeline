@@ -549,7 +549,7 @@ def upload_html_report_to_airtable(record_id: str, html_path: Path, api_key: str
     Uses the Airtable uploadAttachment REST endpoint (JSON body, base64-encoded file).
     The record ID is globally unique within the base — no table ID needed in the path.
     """
-    url = f"{AIRTABLE_API_BASE}/{AIRTABLE_BASE_ID}/{record_id}/{F_MODEL_OUTPUT}/uploadAttachment"
+    url = f"https://content.airtable.com/v0/{AIRTABLE_BASE_ID}/{record_id}/{F_MODEL_OUTPUT}/uploadAttachment"
     encoded = base64.b64encode(html_path.read_bytes()).decode("ascii")
     payload = {
         "contentType": "text/html",
