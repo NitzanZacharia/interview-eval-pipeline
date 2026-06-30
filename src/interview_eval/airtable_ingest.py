@@ -563,6 +563,8 @@ def upload_html_report_to_airtable(record_id: str, html_path: Path, api_key: str
             files={"file": fh},
             timeout=60,
         )
+    if not resp.ok:
+        print(f"  [upload_html] HTTP {resp.status_code} response body: {resp.text}")
     resp.raise_for_status()
 
 
